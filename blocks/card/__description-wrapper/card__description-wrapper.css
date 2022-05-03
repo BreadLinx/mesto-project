@@ -1,0 +1,7 @@
+.card__description-wrapper {
+    display: flex;
+    align-items: center;
+    max-width: 87.2340425%;
+    justify-content: space-between;
+    margin: 22px auto 32px auto;
+}

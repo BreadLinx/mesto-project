@@ -1,0 +1,25 @@
+.card {
+    background-color: #fff;
+    max-width: 282px;
+    max-height: 361px;
+    border-radius: 10px;
+}
+
+@media (max-width: 1280px) {
+    .card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 880px) {
+    .card {
+        max-height: none;
+    }
+}
+
+@media (max-width: 320px) {
+    .card {
+        max-width: 282px;
+        max-height: 361px;
+    }
+}

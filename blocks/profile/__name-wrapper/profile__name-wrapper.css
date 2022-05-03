@@ -1,0 +1,13 @@
+.profile__name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+@media (max-width: 355px) {
+    .profile__name-wrapper {
+        gap: 10px;
+        margin: 0 auto;
+        align-items: start;
+    }
+}

@@ -1,0 +1,16 @@
+.card__like {
+    width: 22px;
+    height: 19px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: inherit;
+    background-size: contain;
+    transition: opacity ease .3s;
+}
+
+.card__like:hover {
+    opacity: 0.5;
+}

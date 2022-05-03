@@ -1,0 +1,36 @@
+.elements {
+    margin: 50px auto 66px auto;
+    max-width: 68.75%;
+    display: grid;
+    grid-template-columns: repeat(3, 282px);
+    gap: 20px 17px;
+}
+
+@media (max-width: 1280px) {
+    .elements {
+        max-width: 880px;
+        grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+    }
+}
+
+@media (max-width: 880px) {
+    .elements {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 435px) {
+    .elements {
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 20px;
+        align-items: center;
+    }
+}
+
+@media (max-width: 355px) {
+    .elements {
+        margin-top: 36px;
+        margin-bottom: 48px;
+    }
+}
