@@ -18,63 +18,65 @@
         <div class="profile__info">
           <div class="profile__name-wrapper">
             <h1 class="profile__name">Жак-Ив Кусто</h1>
-            <button class="profile__edit-button"></button>
+            <button class="profile__edit-button" type="menu"></button>
           </div>
           <p class="profile__info-about">Исследователь океана</p>
         </div>
-        <button class="profile__add-button"></button>
+        <button class="profile__add-button" type="menu"></button>
       </section>
       <section class="elements">
-        <div class="card">
+        <article class="card">
           <img class="card__photo" src="./images/kerachaevsk__card.jpg" alt="Фото Карачаевской церкви">
           <div class="card__description-wrapper">
             <p class="card__description">Карачаевск</p>
-            <button class="card__like card__like_disabled"></button>
+            <button class="card__like" type="button"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__photo" src="./images/dombay__card.jpg" alt="Фото Горы Домбай">
           <div class="card__description-wrapper">
             <p class="card__description">Домбай</p>
-            <button class="card__like card__like_disabled"></button>
+            <button class="card__like" type="button"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__photo" src="./images/Geirangerfjord.jpg" alt="Петра с высоты птичьего полета">
           <div class="card__description-wrapper">
             <p class="card__description">город Петра</p>
-            <button class="card__like card__like_disabled"></button>
+            <button class="card__like" type="button"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__photo" src="./images/Lake-Baikal.jpg" alt="Фото зимнего Байкала">
           <div class="card__description-wrapper">
             <p class="card__description">Байкал</p>
-            <button class="card__like card__like_disabled"></button>
+            <button class="card__like" type="button"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__photo" src="./images/elbrus__card.jpg" alt="Фото горы Эльбрус на заднем плане">
           <div class="card__description-wrapper">
             <p class="card__description">Гора Эльбрус</p>
-            <button class="card__like card__like_disabled"></button>
+            <button class="card__like" type="button"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__photo" src="./images/kawachi-touen.jpg" alt="Фото садов Гейрангер-фьорд">
           <div class="card__description-wrapper">
             <p class="card__description">Гейрангер-фьорд</p>
-            <button class="card__like card__like_disabled"></button>
+            <button class="card__like" type="button"></button>
           </div>
-        </div>
+        </article>
       </section>
       <section class="popup">
         <div class="popup__container">
           <h2 class="popup__title">Редактировать профиль</h2>
-          <input class="popup__input" type="text" name="Имя профиля" placeholder="Как вас зовут?" value="Жак-Ив Кусто">
-          <input class="popup__input" type="text" name="Род деятельности" placeholder="Чем вы занимаетесь?" value="Исследователь океана">
-          <button class="popup__submit" type="submit">Сохранить</button>
-          <a class="popup__close-icon"></a>
+          <form class="popup__form" name="edit-form">
+            <input class="popup__input" type="text" name="Имя профиля" placeholder="Как вас зовут?" value="Жак-Ив Кусто">
+            <input class="popup__input" type="text" name="Род деятельности" placeholder="Чем вы занимаетесь?" value="Исследователь океана">
+            <button class="popup__submit" type="submit">Сохранить</button>
+          </form>
+          <button class="popup__close-icon" type="button"></button>
         </div>
       </section>
     </main>

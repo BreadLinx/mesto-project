@@ -1,11 +1,12 @@
 .header {
     margin: 45px auto 40px auto;
     max-width: 68.75%;
-    height: 74px;
+    min-height: 74px;
     display: flex;
     flex-flow: column nowrap;
     align-items: start;
     justify-content: space-between;
+    border-bottom: 1px solid #575757;
 }
 
 @media (max-width: 1280px) {
@@ -22,7 +23,7 @@
 
 @media (max-width: 355px) {
     .header {
-        height: 56px;
+        min-height: 56px;
         max-width: 100%;
         margin-top: 28px;
     }

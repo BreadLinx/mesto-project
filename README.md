@@ -15,3 +15,5 @@
 Не забудьте [оптимизировать картинки](https://tinypng.com/), чтобы ваш сайт загружался быстрее.
 
 Удачи!
+
+Ссылка на проект залитый на gh-pages: https://breadlinx.github.io/mesto-project/

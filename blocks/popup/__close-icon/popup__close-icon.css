@@ -9,6 +9,10 @@
     top: -40px;
     right: -40px;
     transition: opacity ease 0.3s;
+    background-color: initial;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 @media (max-width: 530px) {

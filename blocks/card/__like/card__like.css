@@ -9,6 +9,7 @@
     background-color: inherit;
     background-size: contain;
     transition: opacity ease .3s;
+    background-image: url(../../../images/like.svg);
 }
 
 .card__like:hover {
