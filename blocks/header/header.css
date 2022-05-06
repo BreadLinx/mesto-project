@@ -6,7 +6,7 @@
     flex-flow: column nowrap;
     align-items: start;
     justify-content: space-between;
-    border-bottom: 1px solid #575757;
+    border-bottom: 1px solid rgba(87, 87, 87, 0.7);;
 }
 
 @media (max-width: 1280px) {
