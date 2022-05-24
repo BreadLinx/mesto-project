@@ -4,6 +4,7 @@
     max-height: 361px;
     border-radius: 10px;
     position: relative;
+    min-height: 282px;
 }
 
 @media (max-width: 1280px) {

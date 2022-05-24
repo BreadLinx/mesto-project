@@ -23,7 +23,6 @@ const initialCards = [
       name: 'Норвежские фьорды',
       link: 'https://i.pinimg.com/736x/81/e5/e0/81e5e0c68a0fde843d40058035d4a857.jpg'
     },
-    
 ]; // массив с карточками в виде объектов
 
 
@@ -36,32 +35,36 @@ const editProfileForm = document.querySelector('#edit-profile-form');  // фор
 const editProfileInputName = document.querySelector('#input-name');  // поле ввода имени в форме попапа изменения профиля
 const editProfileInputWork = document.querySelector('#input-work');  // поле вводе деятельности в форме попапа изменения профиля
 const editProfileFormSubmit = document.querySelector('#edit-profile-form-submit'); // submit формы в попапе изменения профиля
-const ProfileName = document.querySelector('.profile__name');  // имя в секции profile
-const ProfileInfoAbout = document.querySelector('.profile__info-about'); // деятельность в секции profile
+const profileName = document.querySelector('.profile__name');  // имя в секции profile
+const profileInfoAbout = document.querySelector('.profile__info-about'); // деятельность в секции profile
 
-editProfileInputName.value = ProfileName.textContent; // при загрузке страницы поле в форме изменения профиля заполняется текстом из html
-editProfileInputWork.value = ProfileInfoAbout.textContent;
-
-editProfileButton.addEventListener('click', editPopupOpen); // евентлистенер на открытие попапа редактирования профиля
-editProfileCloseButton.addEventListener('click', editPopupClose); // евентлистенер на закрытие попапа редактирования профиля
+editProfileButton.addEventListener('click', () => {
+    popupOpen(editProfilePopup);
+}); // евентлистенер на открытие попапа редактирования профиля
+editProfileCloseButton.addEventListener('click', () => {
+    popupClose(editProfilePopup);
+}); // евентлистенер на закрытие попапа редактирования профиля
 editProfileForm.addEventListener('submit', editFormSubmitHandler);  // евентлистенер на собыие submit формы
 
 
-function editPopupOpen() {
-    editProfilePopup.classList.add('popup_opened');
+function popupOpen(popup) {
+  if(popup === editProfilePopup) {
+    editProfileInputName.value = profileName.textContent;
+    editProfileInputWork.value = profileInfoAbout.textContent;
+  }
+
+  popup.classList.add('popup_opened');
 } // функция открытия попапа изменения профиля
 
 function editFormSubmitHandler(evt) {
     evt.preventDefault();
-    ProfileName.textContent = editProfileInputName.value;
-    ProfileInfoAbout.textContent = editProfileInputWork.value;
-    editProfilePopup.classList.remove('popup_opened');
+    profileName.textContent = editProfileInputName.value;
+    profileInfoAbout.textContent = editProfileInputWork.value;
+    popupClose(editProfilePopup);
 }  // функция-обработчик события нажатия на кнопку submit 
 
-function editPopupClose() {
-    editProfilePopup.classList.remove('popup_opened');
-    editProfileInputName.value = ProfileName.textContent;
-    editProfileInputWork.value = ProfileInfoAbout.textContent;
+function popupClose(popup) {
+    popup.classList.remove('popup_opened');
 }  // функция закрытия попапа изменения профиля
 
 // открытие и закрытие попапа добавления нового места
@@ -74,26 +77,22 @@ const addNewInputPlace = document.querySelector('#input-new-place'); // бере
 const addNewInputPlaceLink = document.querySelector('#input-new-place-link'); // второй инпут формы
 const addNewFormSubmit = document.querySelector('#add-new-form-submit');  // субмит формы
 
-addNewButton.addEventListener('click', addPopupOpen); // евентлистенер для открытия попапа
-addNewCloseButton.addEventListener('click', addPopupClose); // евентлистенер для закрытия попапа
+addNewButton.addEventListener('click', () => {
+    popupOpen(addNewPopup);
+}); // евентлистенер для открытия попапа
+addNewCloseButton.addEventListener('click', () => {
+  popupClose(addNewPopup);
+}); // евентлистенер для закрытия попапа
 addNewForm.addEventListener('submit', addNewFormSubmitHandler);  // евентлистенер для обработки формы и добавления нового места
-
-function addPopupOpen() {
-    addNewPopup.classList.add('popup_opened');
-} // функция открытия попапа
-
-function addPopupClose() {
-    addNewPopup.classList.remove('popup_opened');
-}  // функция закрытия попапа
 
 function addNewFormSubmitHandler(evt) {
     evt.preventDefault();
     if(addNewInputPlace.value !== '' && addNewInputPlaceLink.value !== '') {
     initialCards.push({name: addNewInputPlace.value, link: addNewInputPlaceLink.value},);
-    generateCard(addNewInputPlace.value, addNewInputPlaceLink.value, initialCards.length - 1);
+    insertCardToHTML(createCard(addNewInputPlace.value, addNewInputPlaceLink.value, initialCards.length - 1));
     addNewInputPlace.value = '';
     addNewInputPlaceLink.value = ''
-    addPopupClose();
+    popupClose(addNewPopup);
     } else {
         alert('Ошибка. Вы что-то забыли ввести.');
     }
@@ -105,23 +104,24 @@ function addNewFormSubmitHandler(evt) {
 
 // добавление карточек джаваскриптом при загрузке страницы и добавление карточек пользователем
 
-    initialCards.forEach((item, index) => {
-        generateCard(item.name, item.link, index);
-    });  // цикл перебирающий карточки и отрисовывающий карточки из массива InitialCards при закгрузке страницы
+initialCards.forEach((item, index) => {
+    insertCardToHTML(createCard(item.name, item.link, index));
+});  // цикл перебирающий карточки и отрисовывающий карточки из массива InitialCards при закгрузке страницы
 
 // функция принимает на вход описание карточки, ссылку на картинку и ее индекс в массиве и генерирует карточку
-function generateCard(name, link, index) {
+function createCard(name, link, index) {
     let card = document.querySelector('#card-template').content.cloneNode(true);
     let cardPhoto = card.querySelector('.card__photo');
     cardPhoto.src = link;
+    cardPhoto.alt = name;
     cardPhoto.addEventListener('click', () => {
       let card = cardPhoto.closest('.card');
-      card.querySelector('.card-popup').classList.add('card-popup_opened');
+      card.querySelector('.popup').classList.add('popup_opened');
     });
-    let cardPopupCloseButton = card.querySelector('.card-popup__close-icon');
+    let cardPopupCloseButton = card.querySelector('.popup__close-icon');
     cardPopupCloseButton.addEventListener('click', () => {
       let card = cardPopupCloseButton.closest('.card');
-      card.querySelector('.card-popup').classList.remove('card-popup_opened');
+      card.querySelector('.popup').classList.remove('popup_opened');
     });
     card.querySelector('.card__description').textContent = name;
     let like = card.querySelector('.card__like');
@@ -133,16 +133,11 @@ function generateCard(name, link, index) {
       cardDeleteButton.closest('.card').remove();
       initialCards.splice(index, 1);
     });
-    card.querySelector('.card-popup__image').src = link;
-    card.querySelector('.card-popup__description').textContent = name;
+    card.querySelector('.popup__image').src = link;
+    card.querySelector('.popup__description').textContent = name;
+    return card;
+}
+
+function insertCardToHTML(card) {
     const cards = document.querySelector('.elements').prepend(card);
 }
-// функция-строитель карточек
-// 1. клонирует card-template из html
-// 2. берет фото в карточке, добавляет ему атрибус src с ссылкой на картинку и евентлистенер для открытия попапа карточки
-// 3. берет кнопкудля закрытия попапа карточки и добавяет ему евентлистенер для закрытия карточки
-// 4. меняет описание карточки
-// 5. делает кнопку like рабочей
-// 6. делает кнопку delete рабочей. При нажатии на нее удаляет карточку из html и из массива с карточками.
-// 7. задает image и описания для попапа карточки
-// 8. вставляет карточку в поток html в самое начала секции elements

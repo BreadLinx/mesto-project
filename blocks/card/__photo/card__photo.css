@@ -3,4 +3,23 @@
     aspect-ratio: 1 / 1;
     border-radius: 10px 10px 0 0;
     cursor: pointer;
+    min-height: 282px;
+}
+
+@media (max-width: 880px) {
+    .card__photo {
+        min-height: 267px;   
+    }
+}
+
+@media (max-width: 714px) {
+    .card__photo {
+        min-height: 328px;
+    }
+}
+
+@media (max-width: 320px) {
+    .card__photo {
+        min-height: 282px;
+    }
 }
