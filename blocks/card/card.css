@@ -4,6 +4,7 @@
     max-height: 361px;
     border-radius: 10px;
     position: relative;
+    min-height: 361px;
 }
 
 @media (max-width: 1280px) {
@@ -15,6 +16,7 @@
 @media (max-width: 880px) {
     .card {
         max-height: none;
+        width: 100%;
     }
 }
 
