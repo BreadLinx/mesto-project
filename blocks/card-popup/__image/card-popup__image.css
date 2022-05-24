@@ -1,0 +1,14 @@
+.card-popup__image {
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+@media (max-width: 400px) {
+    .card-popup__image {
+        max-width: none;
+        width: 240px;
+        height: 299px;
+        object-fit: fill;
+    }
+}
