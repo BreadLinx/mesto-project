@@ -4,13 +4,7 @@
     padding: 0;
     margin: 0;
     width: 75vw;
-    height: 75vh;
+    height: 80%;
     background-color: initial;
-    justify-content: space-between;
-}
-
-@media (max-width: 1280px) {
-    .popup__container_type_images {
-        height: initial;
-    }
+    justify-content: center;
 }

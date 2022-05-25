@@ -115,13 +115,10 @@ function createCard(name, link, index) {
     cardPhoto.src = link;
     cardPhoto.alt = name;
     cardPhoto.addEventListener('click', () => {
-      let card = cardPhoto.closest('.card');
-      card.querySelector('.popup').classList.add('popup_opened');
-    });
-    let cardPopupCloseButton = card.querySelector('.popup__close-icon');
-    cardPopupCloseButton.addEventListener('click', () => {
-      let card = cardPopupCloseButton.closest('.card');
-      card.querySelector('.popup').classList.remove('popup_opened');
+      let photoPopup = document.querySelector('#photo-popup');
+      photoPopup.classList.add('popup_opened');
+      photoPopup.querySelector('.popup__image').src = link;
+      photoPopup.querySelector('.popup__description').textContent = name;
     });
     card.querySelector('.card__description').textContent = name;
     let like = card.querySelector('.card__like');
@@ -133,10 +130,14 @@ function createCard(name, link, index) {
       cardDeleteButton.closest('.card').remove();
       initialCards.splice(index, 1);
     });
-    card.querySelector('.popup__image').src = link;
-    card.querySelector('.popup__description').textContent = name;
     return card;
 }
+
+let photoPopup = document.querySelector('#photo-popup');
+let photoPopupDeleteBtn = photoPopup.querySelector('.popup__close-icon');
+photoPopupDeleteBtn.addEventListener('click', () => {
+  photoPopupDeleteBtn.closest('#photo-popup').classList.remove('popup_opened');
+});
 
 function insertCardToHTML(card) {
     const cards = document.querySelector('.elements').prepend(card);
