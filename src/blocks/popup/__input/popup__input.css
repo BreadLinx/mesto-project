@@ -13,16 +13,16 @@
     display: block;
 }
 
-.popup__input:nth-child(1) {
+.popup__input:nth-of-type(1) {
     margin-bottom: 30px;
 }
 
-.popup__input:nth-child(2) {
+.popup__input:nth-of-type(2) {
     margin-bottom: 48px;
 }
 
 @media (max-width: 435px) {
-    .popup__input:nth-child(2) {
+    .popup__input:nth-of-type(2) {
         margin-bottom: 45px;
     }
 }

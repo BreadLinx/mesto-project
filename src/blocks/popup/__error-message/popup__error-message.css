@@ -1,0 +1,22 @@
+.popup__error-message {
+    color: #ff0000;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-width: 83.255814%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: none;
+}
+
+.popup__error-message:nth-of-type(1) {
+    margin-bottom: 13px;
+}
+
+.popup__error-message:nth-of-type(2) {
+    margin-bottom: 31px;
+}

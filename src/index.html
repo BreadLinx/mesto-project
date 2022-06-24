@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesto</title>
-  <link rel="stylesheet" href="./pages/index.css">
 </head>
 <body class="body">
   <div class="page">
@@ -13,7 +12,7 @@
     </header>
     <main class="content">
       <section class="profile">
-        <img class="profile__avatar" src="./images/Avatar.png" alt="Фото профиля.">
+        <img class="profile__avatar" src="../src/images/Avatar.png" alt="Фото профиля.">
         <div class="profile__info">
           <div class="profile__name-wrapper">
             <h1 class="profile__name">Жак-Ив Кусто</h1>
@@ -44,9 +43,11 @@
       <section class="popup" id="edit-profile-popup">
         <div class="popup__container">
           <h2 class="popup__title">Редактировать профиль</h2>
-          <form class="popup__form" id="edit-profile-form" name="edit-form">
-            <input id="input-name" class="popup__input" type="text" name="Имя профиля" placeholder="Как вас зовут?" value="Жак-Ив Кусто">
-            <input id="input-work" class="popup__input" type="text" name="Род деятельности" placeholder="Чем вы занимаетесь?" value="Исследователь океана">
+          <form class="popup__form" id="edit-profile-form" name="editForm" novalidate>
+            <input required minlength="2" maxlength="40" id="input-name" class="popup__input" type="text" name="Имя профиля" placeholder="Как вас зовут?" value="Жак-Ив Кусто">
+            <span id="input-name-span" class="popup__error-message"></span>
+            <input required minlength="2" maxlength="200" id="input-work" class="popup__input" type="text" name="Род деятельности" placeholder="Чем вы занимаетесь?" value="Исследователь океана">
+            <span id="input-work-span" class="popup__error-message"></span>
             <button class="popup__submit" id="edit-profile-form-submit" type="submit">Сохранить</button>
           </form>
           <button class="popup__close-icon" id="edit-profile-close-button" type="button"></button>
@@ -55,9 +56,11 @@
       <section class="popup" id="add-new-popup">
         <div class="popup__container">
           <h2 class="popup__title">Новое место</h2>
-          <form class="popup__form" id="add-new-form" name="edit-form">
-            <input id="input-new-place" class="popup__input" type="text" name="Название нового места" placeholder="Название">
-            <input id="input-new-place-link" class="popup__input" type="text" name="Ссылка на картинку" placeholder="Ссылка на картинку">
+          <form class="popup__form" id="add-new-form" name="addNewform">
+            <input required minlength="2" maxlength="30" id="input-new-place" class="popup__input" type="text" name="Название нового места" placeholder="Название">
+            <span id="input-new-place-span" class="popup__error-message"></span>
+            <input required id="input-new-place-link" class="popup__input" type="url" name="Ссылка на картинку" placeholder="Ссылка на картинку">
+            <span id="input-new-place-link-span" class="popup__error-message"></span>
             <button class="popup__submit" id="add-new-form-submit" type="submit">Создать</button>
           </form>
           <button class="popup__close-icon" id="add-new-close-button" type="button"></button>
@@ -77,6 +80,5 @@
       <p class="footer__copyright">© 2022 Mesto Russia</p>
     </footer>
   </div>
-<script src="./scripts/index.js"></script>  
 </body>
 </html>

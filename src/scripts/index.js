@@ -1,3 +1,8 @@
+import '../pages/index.css';
+
+import geyrangerFiord from '../images/kawachi-touen.jpg';
+import petraCity from '../images/Geirangerfjord.jpg';
+
 const initialCards = [
     {
       name: 'Гималаи',
@@ -5,11 +10,11 @@ const initialCards = [
     },
     {
       name: 'Гейрангер-фьорд',
-      link: './images/kawachi-touen.jpg'
+      link: geyrangerFiord
     },
     {
       name: 'город Петра',
-      link: './images/Geirangerfjord.jpg'
+      link: petraCity
     },
     {
       name: 'Гранд-Каньон',
@@ -46,6 +51,11 @@ editProfileCloseButton.addEventListener('click', () => {
 }); // евентлистенер на закрытие попапа редактирования профиля
 editProfileForm.addEventListener('submit', editFormSubmitHandler);  // евентлистенер на собыие submit формы
 
+editProfilePopup.addEventListener('click', (evt) => {
+  if(evt.target === editProfilePopup) {
+    popupClose(editProfilePopup);
+  }
+});
 
 function popupOpen(popup) {
   if(popup === editProfilePopup) {
@@ -84,6 +94,11 @@ addNewCloseButton.addEventListener('click', () => {
   popupClose(addNewPopup);
 }); // евентлистенер для закрытия попапа
 addNewForm.addEventListener('submit', addNewFormSubmitHandler);  // евентлистенер для обработки формы и добавления нового места
+addNewPopup.addEventListener('click', (evt) => {
+  if(evt.target === addNewPopup) {
+    popupClose(addNewPopup);
+  }
+});
 
 function addNewFormSubmitHandler(evt) {
     evt.preventDefault();
@@ -136,9 +151,101 @@ function createCard(name, link, index) {
 let photoPopup = document.querySelector('#photo-popup');
 let photoPopupDeleteBtn = photoPopup.querySelector('.popup__close-icon');
 photoPopupDeleteBtn.addEventListener('click', () => {
-  photoPopupDeleteBtn.closest('#photo-popup').classList.remove('popup_opened');
+photoPopupDeleteBtn.closest('#photo-popup').classList.remove('popup_opened');
+});
+
+// закрытие фото-попап на оверлей
+const photoPopupOverlay = document.querySelector('#photo-popup');
+photoPopupOverlay.addEventListener('click', (evt) => {
+  if(evt.target === photoPopupOverlay) {
+    popupClose(photoPopupOverlay);
+  }
+});
+
+document.addEventListener('keydown', (evt) => {
+  if(evt.key === "Escape") {
+    popupClose(editProfilePopup);
+    popupClose(addNewPopup);
+    popupClose(photoPopupOverlay);
+  }
 });
 
 function insertCardToHTML(card) {
     const cards = document.querySelector('.elements').prepend(card);
 }
+
+// Валидация форм
+function enableValidation(obj) {
+  const editFormFirstInput = Array.from(document.forms.editForm.elements)[0];
+  const editFormSecondInput = Array.from(document.forms.editForm.elements)[1];
+  const addNewFormFirstInput = Array.from(document.forms.addNewform.elements)[0];
+  const addNewFormSecondInput = Array.from(document.forms.addNewform.elements)[1];
+
+  isValid(editFormFirstInput);
+  isValid(editFormSecondInput);
+  isValid(addNewFormFirstInput);
+  isValid(addNewFormSecondInput);
+
+  editFormFirstInput.addEventListener('input', () => {
+    isValid(editFormFirstInput);
+  });
+  
+  editFormSecondInput.addEventListener('input', () => {
+    isValid(editFormSecondInput);
+  });
+  
+  addNewFormFirstInput.addEventListener('input', () => {
+    isValid(addNewFormFirstInput);
+  });
+  
+  addNewFormSecondInput.addEventListener('input', () => {
+    isValid(addNewFormSecondInput);
+  });
+
+  function showInputError(element, errorText = 'В поле ввода допущена ошибка') {
+    let elementId = element.id;
+    let elementSpan = document.querySelector(`#${elementId}-span`);
+    let submitButton = element.closest('.popup__form').querySelector('.popup__submit');
+    element.classList.add('popup__input_error');
+    elementSpan.classList.add('popup__error-message_opened');
+    elementSpan.textContent = errorText;
+    submitButton.setAttribute('disabled', 0);
+    submitButton.classList.add('popup__submit_disabled');
+  }
+  
+  function hideInputError(element) {
+    let elementId = element.id;
+    let elementSpan = document.querySelector(`#${elementId}-span`);
+    let submitButton = element.closest('.popup__form').querySelector('.popup__submit');
+    element.classList.remove('popup__input_error');
+    elementSpan.classList.remove('popup__error-message_opened');
+    elementSpan.textContent = '';
+    if(element.closest('.popup__form').id === 'edit-profile-form') {
+      if(element.closest('.popup__form').querySelector('#input-name').validity.valid && element.closest('.popup__form').querySelector('#input-work').validity.valid) {
+        submitButton.removeAttribute('disabled');
+        submitButton.classList.remove('popup__submit_disabled');
+      }
+    } else if(element.closest('.popup__form').id === 'add-new-form'){
+      if(element.closest('.popup__form').querySelector('#input-new-place').validity.valid && element.closest('.popup__form').querySelector('#input-new-place-link').validity.valid) {
+        submitButton.removeAttribute('disabled');
+        submitButton.classList.remove('popup__submit_disabled');
+      }
+    }
+  }
+  
+  function isValid(input) {
+    if(!input.validity.valid) {
+      showInputError(input, input.validationMessage);
+    } else {
+      hideInputError(input);
+    }
+  }
+}
+
+enableValidation({
+  formSelector: '.popup__form',
+  submitButtonSelector: '.popup__submit',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+});
