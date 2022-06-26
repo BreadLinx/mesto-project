@@ -1,28 +1,15 @@
 export function enableValidation(config) {
-    const editFormFirstInput = Array.from(document.forms.editForm.elements)[0];
-    const editFormSecondInput = Array.from(document.forms.editForm.elements)[1];
-    const addNewFormFirstInput = Array.from(document.forms.addNewform.elements)[0];
-    const addNewFormSecondInput = Array.from(document.forms.addNewform.elements)[1];
-  
-    isValid(editFormFirstInput);
-    isValid(editFormSecondInput);
-    isValid(addNewFormFirstInput);
-    isValid(addNewFormSecondInput);
-  
-    editFormFirstInput.addEventListener('input', () => {
-      isValid(editFormFirstInput);
-    });
-    
-    editFormSecondInput.addEventListener('input', () => {
-      isValid(editFormSecondInput);
-    });
-    
-    addNewFormFirstInput.addEventListener('input', () => {
-      isValid(addNewFormFirstInput);
-    });
-    
-    addNewFormSecondInput.addEventListener('input', () => {
-      isValid(addNewFormSecondInput);
+    const forms = Array.from(document.forms);
+    forms.forEach((form) => {
+      let formInputs = Array.from(form.elements).filter((element) => {
+        return element.className === 'popup__input';
+      });
+      for(let i = 0; i < formInputs.length; i++) {
+        isValid(formInputs[i]);
+        formInputs[i].addEventListener('input', () => {
+          isValid(formInputs[i]);
+        });
+      }
     });
   
     function showInputError(element, errorText = 'В поле ввода допущена ошибка') {
