@@ -1,18 +1,16 @@
 export function enableValidation(config) {
   const formList = Array.from(document.querySelectorAll(config.formSelector));
   formList.forEach((formElement) => {
-    const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
-    const buttonElement = formElement.querySelector(config.submitButtonSelector);
-    formElement.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      toggleButtonState(inputList, buttonElement);
-    });
     setEventListener(formElement);
   });
 
   function setEventListener(formElement) {
     const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
     const buttonElement = formElement.querySelector(config.submitButtonSelector);
+    formElement.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      toggleButtonState(inputList, buttonElement);
+    });
     toggleButtonState(inputList, buttonElement);
     inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', () => {

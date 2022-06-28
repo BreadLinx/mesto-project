@@ -58,11 +58,11 @@ export function createCard(name, link) {
       popupImage.textContent = name;
     });
     card.querySelector('.card__description').textContent = name;
-    let like = card.querySelector('.card__like');
+    const like = card.querySelector('.card__like');
     like.addEventListener('click', () => {
         like.classList.toggle('card__like_active');
     });
-    let cardDeleteButton = card.querySelector('.card__delete-button');
+    const cardDeleteButton = card.querySelector('.card__delete-button');
     cardDeleteButton.addEventListener('click', () => {
       cardDeleteButton.closest('.card').remove();
     });
