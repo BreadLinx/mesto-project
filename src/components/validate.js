@@ -1,53 +1,62 @@
 export function enableValidation(config) {
-    const forms = Array.from(document.forms);
-    forms.forEach((form) => {
-      let formInputs = Array.from(form.elements).filter((element) => {
-        return element.className === 'popup__input';
-      });
-      for(let i = 0; i < formInputs.length; i++) {
-        isValid(formInputs[i]);
-        formInputs[i].addEventListener('input', () => {
-          isValid(formInputs[i]);
-        });
-      }
+  const formList = Array.from(document.querySelectorAll(config.formSelector));
+  formList.forEach((formElement) => {
+    const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+    const buttonElement = formElement.querySelector(config.submitButtonSelector);
+    formElement.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      toggleButtonState(inputList, buttonElement);
     });
-  
-    function showInputError(element, errorText = 'В поле ввода допущена ошибка') {
-      let elementId = element.id;
-      let elementSpan = document.querySelector(`#${elementId}-span`);
-      let submitButton = element.closest(config.formSelector).querySelector(config.submitButtonSelector);
-      element.classList.add(config.inputErrorClass);
-      elementSpan.classList.add(config.errorSpanOpenedClass);
-      elementSpan.textContent = errorText;
-      submitButton.setAttribute('disabled', 0);
-      submitButton.classList.add(config.submitButtonDisabledClass);
-    }
-    
-    function hideInputError(element) {
-      let elementId = element.id;
-      let elementSpan = document.querySelector(`#${elementId}-span`);
-      let submitButton = element.closest(config.formSelector).querySelector(config.submitButtonSelector);
-      element.classList.remove(config.inputErrorClass);
-      elementSpan.classList.remove(config.errorSpanOpenedClass);
-      elementSpan.textContent = '';
-      if(element.closest(config.formSelector).id === 'edit-profile-form') {
-        if(element.closest(config.formSelector).querySelector(config.editFormNameInputId).validity.valid && element.closest(config.formSelector).querySelector(config.editFormWorkInputId).validity.valid) {
-          submitButton.removeAttribute('disabled');
-          submitButton.classList.remove(config.submitButtonDisabledClass);
-        }
-      } else if(element.closest(config.formSelector).id === 'add-new-form'){
-        if(element.closest(config.formSelector).querySelector(config.addNewFormNewPlaceNameId).validity.valid && element.closest(config.formSelector).querySelector(config.addNewFormNewPlaceLinkId).validity.valid) {
-          submitButton.removeAttribute('disabled');
-          submitButton.classList.remove(config.submitButtonDisabledClass);
-        }
-      }
-    }
-    
-    function isValid(input) {
-      if(!input.validity.valid) {
-        showInputError(input, input.validationMessage);
-      } else {
-        hideInputError(input);
-      }
+    setEventListener(formElement);
+  });
+
+  function setEventListener(formElement) {
+    const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+    const buttonElement = formElement.querySelector(config.submitButtonSelector);
+    toggleButtonState(inputList, buttonElement);
+    inputList.forEach((inputElement) => {
+      inputElement.addEventListener('input', () => {
+        isValid(formElement, inputElement);
+        toggleButtonState(inputList, buttonElement);
+      });
+    });
+  }
+
+  function isValid(formElement, input) {
+    if(!input.validity.valid) {
+      showInputError(formElement, input, input.validationMessage);
+    } else {
+      hideInputError(formElement, input);
     }
   }
+  
+  function hideInputError(formElement, inputElement) {
+    const errorElement = formElement.querySelector(`#${inputElement.id}-span`);
+    inputElement.classList.remove(config.inputErrorClass);
+    errorElement.classList.remove(config.errorSpanOpenedClass);
+    errorElement.textContent = '';
+  }
+  
+  function showInputError(formElement, inputElement, errorText = 'В поле ввода допущена ошибка') {
+    const errorElement = formElement.querySelector(`#${inputElement.id}-span`);
+    inputElement.classList.add(config.inputErrorClass);
+    errorElement.textContent = errorText;
+    errorElement.classList.add(config.errorSpanOpenedClass);
+  }
+  
+  function hasInvalidInput(inputList) {
+    return inputList.some((inputElement) => {
+      return !inputElement.validity.valid;
+    });
+  }
+  
+  function toggleButtonState(inputList, buttonElement) {
+    if(hasInvalidInput(inputList)) {
+      buttonElement.classList.add(config.submitButtonInactiveClass);
+      buttonElement.setAttribute('disabled', 0);
+    } else {
+      buttonElement.classList.remove(config.submitButtonInactiveClass);
+      buttonElement.removeAttribute('disabled', 0);
+    }
+  }
+}

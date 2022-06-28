@@ -1,8 +1,7 @@
 import geyrangerFiord from '../images/kawachi-touen.jpg';
 import petraCity from '../images/Geirangerfjord.jpg';
 import {openPopup, closePopup, closePopupByESC} from './modal';
-import {enableValidation} from './validate';
-import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards} from './index';
+import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage} from './index';
 
 export const initialCards = [
     {
@@ -44,34 +43,18 @@ export function handleAddNewFormSubmit(evt) {
     insertCardToHTML(createCard(addNewInputPlace.value, addNewInputPlaceLink.value));
     closePopup(addNewPopup);
     evt.target.reset();
-    enableValidation({
-      formSelector: '.popup__form',
-      submitButtonSelector: '.popup__submit',
-      inactiveButtonClass: 'popup__button_disabled',
-      inputErrorClass: 'popup__input_error',
-      errorClass: 'popup__error_visible',
-      errorSpanOpenedClass: 'popup__error-message_opened',
-      submitButtonDisabledClass: 'popup__submit_disabled',
-      editFormNameInputId: '#input-name',
-      editFormWorkInputId: '#input-work',
-      addNewFormNewPlaceNameId: '#input-new-place',
-      addNewFormNewPlaceLinkId: '#input-new-place-link',
-    });
   }
 }
 
 export function createCard(name, link) {
     const card = document.querySelector('#card-template').content.cloneNode(true);
-    let cardPhoto = card.querySelector('.card__photo');
+    const cardPhoto = card.querySelector('.card__photo');
     cardPhoto.src = link;
     cardPhoto.alt = `Изображние показывающее ${name}`;
     cardPhoto.addEventListener('click', () => {
-      const photoPopup = document.querySelector('#photo-popup');
       openPopup(photoPopup);
-      const photoPopupPhoto = photoPopup.querySelector('.popup__image');
       photoPopupPhoto.src = link;
       photoPopupPhoto.alt = `Изображние показывающее ${name}`;
-      const popupImage = photoPopup.querySelector('.popup__description');
       popupImage.textContent = name;
     });
     card.querySelector('.card__description').textContent = name;
