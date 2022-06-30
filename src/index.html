@@ -12,13 +12,13 @@
     </header>
     <main class="content">
       <section class="profile">
-        <img class="profile__avatar" src="<%=require('./images/Avatar.png')%>" alt="Фото профиля.">
+        <img class="profile__avatar" src="" alt="Фото профиля.">
         <div class="profile__info">
           <div class="profile__name-wrapper">
-            <h1 class="profile__name">Жак-Ив Кусто</h1>
+            <h1 class="profile__name"></h1>
             <button class="profile__edit-button" type="button"></button>
           </div>
-          <p class="profile__info-about">Исследователь океана</p>
+          <p class="profile__info-about"></p>
         </div>
         <button class="profile__add-button" type="button"></button>
       </section>
@@ -32,7 +32,10 @@
             <button class="card__delete-button" type="button"></button>
             <div class="card__description-wrapper">
               <h2 class="card__description">Гейрангер-фьорд</h2>
-              <button class="card__like" type="button"></button>
+              <div class="card__likes-wrapper">
+                <button class="card__like" type="button"></button>
+                <span class="card__likes-counter">0</span>
+              </div>
             </div>
           </article>
         </template>
@@ -73,6 +76,15 @@
             <h2 class="popup__description">Карачаевск</h2>
             <button class="popup__close-icon" type="button"></button>
           </div>
+        </div>
+      </section>
+      <section class="popup" id="delete-action-submit-popup">
+        <div class="popup__container popup__container_type_action-submit">
+          <h2 class="popup__title popup__title_type_action-submit">Вы уверены?</h2>
+          <form class="popup__form" name="deleteSubmitForm" id="delete-submit-form">
+            <button class="popup__submit" id="delete-submit-form-sumbit" type="submit">Да</button>
+          </form>
+          <button class="popup__close-icon" type="button"></button>
         </div>
       </section>
     </main>

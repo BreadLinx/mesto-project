@@ -1,7 +1,8 @@
 import '../pages/index.css';
 import {enableValidation} from './validate.js';
-import {initialCards, handleEditFormSubmit, handleAddNewFormSubmit, createCard, insertCardToHTML} from './card';
+import {handleEditFormSubmit, handleAddNewFormSubmit, createCard, insertCardToHTML} from './card';
 import {openPopup, closePopup, closePopupByESC} from './modal';
+import {sendDeleteRequest} from './api';
 
 const editProfileButton = document.querySelector('.profile__edit-button'); // кнопка изменения профиля
 const editProfilePopup = document.querySelector('#edit-profile-popup'); // попап изменения профиля
@@ -20,8 +21,54 @@ const popups = document.querySelectorAll('.popup');
 const photoPopup = document.querySelector('#photo-popup');
 const photoPopupPhoto = photoPopup.querySelector('.popup__image');
 const popupImage = photoPopup.querySelector('.popup__description');
+const profileAvatar = document.querySelector('.profile__avatar');
+const deleteActionSubmitPopup = document.querySelector('#delete-action-submit-popup');
+const deleteSubmitForm = document.querySelector('#delete-submit-form');
 
-export {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage};
+export {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup};
+
+fetch('https://nomoreparties.co/v1/plus-cohort-13/users/me', {
+  method: 'GET',
+  headers: {
+    authorization: 'd0237f44-6bee-4b11-b7b4-b67bb1856179'
+  }
+})
+.then((res) => {
+  return res.json();
+})
+.then((res) => {
+  profileName.textContent = res.name;
+  profileInfoAbout.textContent = res.about;
+  profileAvatar.src = res.avatar;
+})
+.catch((err) => {
+  console.log('Ошибка при попытке загрузки профиля.');
+});
+
+fetch('https://nomoreparties.co/v1/plus-cohort-13/cards',{
+  method: 'GET',
+  headers: {
+    authorization: 'd0237f44-6bee-4b11-b7b4-b67bb1856179'
+  }
+})
+.then((res) => {
+  return res.json();
+})
+.then((res) => {
+  res.forEach((card) => {
+    if(card.likes.length === 0) {
+      insertCardToHTML(createCard(card.name, card.link, card.likes.length, card.owner._id, card._id, false));
+    } else {
+      const myLike = card.likes.some((user) => {
+        return user._id === '3aa69ff877e5d2e63a6e38fc';
+      });
+      insertCardToHTML(createCard(card.name, card.link, card.likes.length, card.owner._id, card._id, myLike));
+    }
+  });
+})
+.catch((err) => {
+  console.log('Ошибка при попытке загрузки карточек.');
+});
 
 popups.forEach((popup) => {
   popup.addEventListener('mousedown', (evt) => {
@@ -48,12 +95,7 @@ addNewButton.addEventListener('click', () => {
   openPopup(addNewPopup);
 }); // евентлистенер для открытия попапа
 
-addNewForm.addEventListener('submit', handleAddNewFormSubmit);  // евентлистенер для обработки формы и добавления нового места
-
-// добавление карточек джаваскриптом при загрузке страницы и добавление карточек пользователем
-initialCards.forEach((item, index) => {
-    insertCardToHTML(createCard(item.name, item.link, index));
-});  // цикл перебирающий карточки и отрисовывающий карточки из массива InitialCards при закгрузке страницы
+addNewForm.addEventListener('submit', handleAddNewFormSubmit);  // евентлистенер для добавления нового места
 
 // Валидация форм
 enableValidation({

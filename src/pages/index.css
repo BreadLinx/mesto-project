@@ -38,3 +38,26 @@
 @import url(../blocks/popup/__close-icon/popup__close-icon.css);
 @import url(../blocks/footer/footer.css);
 @import url(../blocks/footer/__copyright/footer__copyright.css);
+
+.card__likes-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 3px;
+}
+
+.card__likes-counter {
+    color: #333;
+    font-weight: 400;
+    line-height: 16px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.popup__container_type_action-submit {
+    height: initial;
+}
+
+.popup__title_type_action-submit {
+    margin-bottom: 25px;
+}
