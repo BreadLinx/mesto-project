@@ -1,58 +1,48 @@
-import {openPopup, closePopup, closePopupByESC} from './modal';
-import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup} from './index';
-import {sendDeleteRequest, sendPutLikeRequest, sendDeleteLikeRequest, getLikes} from './api';
+import {openPopup, closePopup} from './modal';
+import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit} from './index';
+import {sendDeleteRequest, sendPutLikeRequest, sendDeleteLikeRequest, updateAvatar, uploadNewUserInformationRequest, addNewCardRequest} from './api';
 
 export function handleEditFormSubmit(evt) {
     evt.preventDefault();
-    fetch('https://nomoreparties.co/v1/plus-cohort-13/users/me', {
-      method: 'PATCH',
-      headers: {
-        authorization: 'd0237f44-6bee-4b11-b7b4-b67bb1856179',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: editProfileInputName.value,
-        about: editProfileInputWork.value
-      })
-    })
+    editProfilePopupSubmit.textContent = 'Сохранение...';
+    uploadNewUserInformationRequest(editProfileInputName.value, editProfileInputWork.value)
     .then((res) => {
       return res.json();
     })
     .then((res) => {
       profileName.textContent = res.name;
       profileInfoAbout.textContent = res.about;
+      editProfilePopupSubmit.textContent = 'Сохранено';
+    })
+    .then(() => {
+      closePopup(editProfilePopup);
+      editProfilePopupSubmit.textContent = 'Сохранить';
     })
     .catch((err) => {
-      console.log('Ошибка при попытке изменения профиля');
+      console.log(err);
     });
-    closePopup(editProfilePopup);
 }
 
 export function handleAddNewFormSubmit(evt) {
     evt.preventDefault();
     if(addNewInputPlace.value !== '' && addNewInputPlaceLink.value !== '') {
-    fetch('https://nomoreparties.co/v1/plus-cohort-13/cards', {
-      method: 'POST',
-      headers: {
-        authorization: 'd0237f44-6bee-4b11-b7b4-b67bb1856179',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: addNewInputPlace.value,
-        link: addNewInputPlaceLink.value
-      })
-    })
+    addNewPopupSubmit.textContent = 'Сохранение...';
+    addNewCardRequest(addNewInputPlace.value, addNewInputPlaceLink.value)
     .then((res) => {
+      
       return res.json();
     })
     .then((res) => {
       cards.prepend(createCard(res.name, res.link, res.likes.length, res.owner._id, res._id, false));
     })
+    .then(() => {
+      addNewPopupSubmit.textContent = 'Сохранено';
+      closePopup(addNewPopup);
+      addNewPopupSubmit.textContent = 'Создать';
+    })
     .catch((err) => {
-      console.log('Ошибка при создании новой карточки.');
+      console.log(err);
     });
-    closePopup(addNewPopup);
-    evt.target.reset();
   }
 }
 
@@ -61,21 +51,59 @@ export function handleDeleteCard(card) {
   card = null;
 }
 
-export function deleteCard(submitPopup, cardElement, cardID) {
+export function deleteCard(submitPopup, closeIcon, cardElement, cardID) {
   function handleRemoveCardSubmit(evt) {
     evt.preventDefault();
+    deleteActionSubmitPopupSubmit.textContent = 'Удаление...';
     sendDeleteRequest(cardID)
     .then(() => {
       handleDeleteCard(cardElement);
-      submitPopup.removeEventListener('submit', handleRemoveCardSubmit);
+      removeCloseEventListeners();
+      removeSubmitEventListener();
+      deleteActionSubmitPopupSubmit.textContent = 'Удалено';
       closePopup(submitPopup);
+      deleteActionSubmitPopupSubmit.textContent = 'Да';
     })
     .catch((err) => {
-      console.log(`При удалении карточки произошла ${err}`);
-      submitPopup.removeEventListener('submit', handleRemoveCardSubmit);
+      console.log(err);
+      removeCloseEventListeners();
+      removeSubmitEventListener();
     });
   }
+
+  function closeSubmitPopupByOverlay(evt) {
+    if(evt.target.id === 'delete-action-submit-popup') {
+      removeSubmitEventListener();
+      removeCloseEventListeners();
+    }
+  }
+
+  function closeSubmitPopupByESC(evt) {
+    if(evt.key === "Escape") {
+      removeSubmitEventListener();
+      removeCloseEventListeners();
+    }
+  }
+
+  function closeSubmitPopupByCloseIcon() {
+    removeSubmitEventListener();
+    removeCloseEventListeners();
+  }
+
+  function removeSubmitEventListener() {
+    submitPopup.removeEventListener('submit', handleRemoveCardSubmit);
+  }
+
+  function removeCloseEventListeners() {
+    closeIcon.removeEventListener('mousedown', closeSubmitPopupByCloseIcon);
+    submitPopup.removeEventListener('mousedown', closeSubmitPopupByOverlay);
+    document.removeEventListener('keydown', closeSubmitPopupByESC);
+  }
+
   submitPopup.addEventListener('submit', handleRemoveCardSubmit);
+  submitPopup.addEventListener('mousedown', closeSubmitPopupByOverlay);
+  document.addEventListener('keydown', closeSubmitPopupByESC);
+  closeIcon.addEventListener('mousedown', closeSubmitPopupByCloseIcon);
   openPopup(submitPopup);
 }
 
@@ -112,7 +140,7 @@ export function createCard(name, link, likesAmount, ownerID, cardID, myLike = fa
       cardDeleteButton.addEventListener('click', (evt) => {
         const targetCard = evt.target.closest('.card');
         const targetCardID = card.id;
-        deleteCard(deleteActionSubmitPopup, targetCard, targetCardID);
+        deleteCard(deleteActionSubmitPopup, deleteActionSubmitPopupDeleteBtn, targetCard, targetCardID);
       });
     } else {
       cardDeleteButton.remove();
@@ -130,7 +158,6 @@ function putLikeOnCard(targetCard, cardID) {
     return res.json();
   })
   .then((res) => {
-    // console.log(res);
     targetCard.querySelector('.card__like').classList.add('card__like_active');
     targetCard.querySelector('.card__likes-counter').textContent = res.likes.length;
   })
@@ -145,9 +172,25 @@ function deleteLikeFromCard(targetCard, cardID) {
     return res.json();
   })
   .then((res) => {
-    // console.log(res);
     targetCard.querySelector('.card__like').classList.remove('card__like_active');
     targetCard.querySelector('.card__likes-counter').textContent = res.likes.length;
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+}
+
+export function handleUploadAvatarSubmit(avatarLink) {
+  uploadAvatarPopupSubmit.textContent = 'Сохранение...';
+  updateAvatar(avatarLink)
+  .then((res) => {
+    return res.json();
+  })
+  .then((res) => {
+    profileAvatar.src = res.avatar;
+    uploadAvatarPopupSubmit.textContent = 'Сохранено';
+    closePopup(uploadAvatarPopup);
+    uploadAvatarPopupSubmit.textContent = 'Сохранить';
   })
   .catch((err) => {
     console.log(err);

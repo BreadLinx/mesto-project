@@ -12,7 +12,9 @@
     </header>
     <main class="content">
       <section class="profile">
-        <img class="profile__avatar" src="" alt="Фото профиля.">
+        <button class="profile__avatar-overlay" type="button">
+          <img class="profile__avatar" src="" alt="Фото профиля.">
+        </button>
         <div class="profile__info">
           <div class="profile__name-wrapper">
             <h1 class="profile__name"></h1>
@@ -83,6 +85,17 @@
           <h2 class="popup__title popup__title_type_action-submit">Вы уверены?</h2>
           <form class="popup__form" name="deleteSubmitForm" id="delete-submit-form">
             <button class="popup__submit" id="delete-submit-form-sumbit" type="submit">Да</button>
+          </form>
+          <button class="popup__close-icon" type="button"></button>
+        </div>
+      </section>
+      <section class="popup" id="upload-new-avatar-popup">
+        <div class="popup__container popup__container_type_upload-avatar">
+          <h2 class="popup__title">Обновить аватар</h2>
+          <form class="popup__form" id="upload-new-avatar-form" name="uploadAvatarForm">
+            <input required class="popup__input" type="url" name="Ссылка на картинку" placeholder="Ссылка на картинку" id="input-upload-avatar"></input>
+            <span id="input-upload-avatar-span" class="popup__error-message"></span>
+            <button class="popup__submit" id="upload-avatar-form-sumbit" type="submit">Сохранить</button>
           </form>
           <button class="popup__close-icon" type="button"></button>
         </div>

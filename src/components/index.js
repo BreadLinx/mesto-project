@@ -1,11 +1,12 @@
 import '../pages/index.css';
 import {enableValidation} from './validate.js';
-import {handleEditFormSubmit, handleAddNewFormSubmit, createCard, insertCardToHTML} from './card';
-import {openPopup, closePopup, closePopupByESC} from './modal';
-import {sendDeleteRequest} from './api';
+import {handleEditFormSubmit, handleAddNewFormSubmit, createCard, insertCardToHTML, handleUploadAvatarSubmit} from './card';
+import {openPopup, closePopup} from './modal';
+import {uploadUserInformationRequest, getCardsArrayRequest} from './api';
 
 const editProfileButton = document.querySelector('.profile__edit-button'); // кнопка изменения профиля
 const editProfilePopup = document.querySelector('#edit-profile-popup'); // попап изменения профиля
+const editProfilePopupSubmit = editProfilePopup.querySelector('.popup__submit');
 const editProfileForm = document.querySelector('#edit-profile-form');  // форма изменения профиля
 const editProfileInputName = document.querySelector('#input-name');  // поле ввода имени в форме попапа изменения профиля
 const profileName = document.querySelector('.profile__name');  // имя в секции profile
@@ -13,6 +14,7 @@ const editProfileInputWork = document.querySelector('#input-work');  // поле
 const profileInfoAbout = document.querySelector('.profile__info-about'); // деятельность в секции profile
 const addNewButton = document.querySelector('.profile__add-button'); // берем кнопку для открытия попапа добавления нового места в секции profile
 const addNewPopup = document.querySelector('#add-new-popup'); // берем попап добавления нового места
+const addNewPopupSubmit = addNewPopup.querySelector('.popup__submit');
 const addNewForm = document.querySelector('#add-new-form');  // берем форму добавления места в попапе
 const addNewInputPlace = document.querySelector('#input-new-place');
 const addNewInputPlaceLink = document.querySelector('#input-new-place-link');
@@ -23,16 +25,17 @@ const photoPopupPhoto = photoPopup.querySelector('.popup__image');
 const popupImage = photoPopup.querySelector('.popup__description');
 const profileAvatar = document.querySelector('.profile__avatar');
 const deleteActionSubmitPopup = document.querySelector('#delete-action-submit-popup');
-const deleteSubmitForm = document.querySelector('#delete-submit-form');
+const deleteActionSubmitPopupDeleteBtn = deleteActionSubmitPopup.querySelector('.popup__close-icon');
+const deleteActionSubmitPopupSubmit = deleteActionSubmitPopup.querySelector('.popup__submit');
+const avatarOverlay = document.querySelector('.profile__avatar-overlay');
+const uploadAvatarPopup = document.querySelector('#upload-new-avatar-popup');
+const uploadAvatarPopupSubmit = uploadAvatarPopup.querySelector('.popup__submit');
+const uploadAvatarForm = document.querySelector('#upload-new-avatar-form');
+const inputUploadAvatar = document.querySelector('#input-upload-avatar');
 
-export {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup};
+export {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit};
 
-fetch('https://nomoreparties.co/v1/plus-cohort-13/users/me', {
-  method: 'GET',
-  headers: {
-    authorization: 'd0237f44-6bee-4b11-b7b4-b67bb1856179'
-  }
-})
+uploadUserInformationRequest()
 .then((res) => {
   return res.json();
 })
@@ -45,12 +48,7 @@ fetch('https://nomoreparties.co/v1/plus-cohort-13/users/me', {
   console.log('Ошибка при попытке загрузки профиля.');
 });
 
-fetch('https://nomoreparties.co/v1/plus-cohort-13/cards',{
-  method: 'GET',
-  headers: {
-    authorization: 'd0237f44-6bee-4b11-b7b4-b67bb1856179'
-  }
-})
+getCardsArrayRequest()
 .then((res) => {
   return res.json();
 })
@@ -73,10 +71,10 @@ fetch('https://nomoreparties.co/v1/plus-cohort-13/cards',{
 popups.forEach((popup) => {
   popup.addEventListener('mousedown', (evt) => {
     if (evt.target.classList.contains('popup_opened')) {
-      closePopup(popup)
+      closePopup(popup);
     }
     if (evt.target.classList.contains('popup__close-icon')) {
-      closePopup(popup)
+      closePopup(popup);
     }
   });
 });
@@ -96,6 +94,16 @@ addNewButton.addEventListener('click', () => {
 }); // евентлистенер для открытия попапа
 
 addNewForm.addEventListener('submit', handleAddNewFormSubmit);  // евентлистенер для добавления нового места
+
+avatarOverlay.addEventListener('click', () => {
+  openPopup(uploadAvatarPopup);
+});
+
+uploadAvatarForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  handleUploadAvatarSubmit(inputUploadAvatar.value);
+  uploadAvatarForm.reset();
+});
 
 // Валидация форм
 enableValidation({

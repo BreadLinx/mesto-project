@@ -9,6 +9,7 @@ export function enableValidation(config) {
     const buttonElement = formElement.querySelector(config.submitButtonSelector);
     formElement.addEventListener('submit', (evt) => {
       evt.preventDefault();
+      formElement.reset();
       toggleButtonState(inputList, buttonElement);
     });
     toggleButtonState(inputList, buttonElement);

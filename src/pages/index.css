@@ -5,6 +5,7 @@
 @import url(../blocks/header/header.css);
 @import url(../blocks/header/__logo/header__logo.css);
 @import url(../blocks/profile/profile.css);
+@import url(../blocks/profile/__avatar-overlay/profile__avatar-overlay.css);
 @import url(../blocks/profile/__avatar/profile__avatar.css);
 @import url(../blocks/profile/__info/profile__info.css);
 @import url(../blocks/profile/__name-wrapper/profile__name-wrapper.css);
@@ -18,16 +19,21 @@
 @import url(../blocks/card/__delete-button/card__delete-button.css);
 @import url(../blocks/card/__description-wrapper/card__description-wrapper.css);
 @import url(../blocks/card/__description/card__description.css);
+@import url(../blocks/card/__likes-wrapper/card__likes-wrapper.css);
 @import url(../blocks/card/__like/card__like.css);
 @import url(../blocks/card/__like/_active/card__like_active.css);
+@import url(../blocks/card/__likes-counter/card__likes-counter.css);
 @import url(../blocks/popup/popup.css);
 @import url(../blocks/popup/_opened/popup_opened.css);
 @import url(../blocks/popup/__container/popup__container.css);
 @import url(../blocks/popup/__container/_type/popup__container_type_images.css);
+@import url(../blocks/popup/__container/_type/popup__container_type_action-submit.css);
+@import url(../blocks/popup/__container/_type/popup__container_type_upload-avatar.css);
 @import url(../blocks/popup/__image-container/popup__image-container.css);
 @import url(../blocks/popup/__image/popup__image.css);
 @import url(../blocks/popup/__description/popup__description.css);
 @import url(../blocks/popup/__title/popup__title.css);
+@import url(../blocks/popup/__title/_type/popup__title_type_action-submit.css);
 @import url(../blocks/popup/__form/popup__form.css);
 @import url(../blocks/popup/__input/popup__input.css);
 @import url(../blocks/popup/__input/_error/popup__input_error.css);
@@ -38,26 +44,3 @@
 @import url(../blocks/popup/__close-icon/popup__close-icon.css);
 @import url(../blocks/footer/footer.css);
 @import url(../blocks/footer/__copyright/footer__copyright.css);
-
-.card__likes-wrapper {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    gap: 3px;
-}
-
-.card__likes-counter {
-    color: #333;
-    font-weight: 400;
-    line-height: 16px;
-    font-size: 13px;
-    text-align: center;
-}
-
-.popup__container_type_action-submit {
-    height: initial;
-}
-
-.popup__title_type_action-submit {
-    margin-bottom: 25px;
-}
