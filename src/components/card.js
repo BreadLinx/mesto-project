@@ -1,14 +1,12 @@
 import {openPopup, closePopup} from './modal';
-import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit} from './index';
+import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit, cardTemplate, userId} from './index';
 import {sendDeleteRequest, sendPutLikeRequest, sendDeleteLikeRequest, updateAvatar, uploadNewUserInformationRequest, addNewCardRequest} from './api';
 
 export function handleEditFormSubmit(evt) {
     evt.preventDefault();
     editProfilePopupSubmit.textContent = 'Сохранение...';
     uploadNewUserInformationRequest(editProfileInputName.value, editProfileInputWork.value)
-    .then((res) => {
-      return res.json();
-    })
+    .then(checkResponse)
     .then((res) => {
       profileName.textContent = res.name;
       profileInfoAbout.textContent = res.about;
@@ -16,10 +14,12 @@ export function handleEditFormSubmit(evt) {
     })
     .then(() => {
       closePopup(editProfilePopup);
-      editProfilePopupSubmit.textContent = 'Сохранить';
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      editProfilePopupSubmit.textContent = 'Сохранить';
     });
 }
 
@@ -28,20 +28,19 @@ export function handleAddNewFormSubmit(evt) {
     if(addNewInputPlace.value !== '' && addNewInputPlaceLink.value !== '') {
     addNewPopupSubmit.textContent = 'Сохранение...';
     addNewCardRequest(addNewInputPlace.value, addNewInputPlaceLink.value)
-    .then((res) => {
-      
-      return res.json();
-    })
+    .then(checkResponse)
     .then((res) => {
       cards.prepend(createCard(res.name, res.link, res.likes.length, res.owner._id, res._id, false));
     })
     .then(() => {
       addNewPopupSubmit.textContent = 'Сохранено';
       closePopup(addNewPopup);
-      addNewPopupSubmit.textContent = 'Создать';
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      addNewPopupSubmit.textContent = 'Создать';
     });
   }
 }
@@ -56,18 +55,24 @@ export function deleteCard(submitPopup, closeIcon, cardElement, cardID) {
     evt.preventDefault();
     deleteActionSubmitPopupSubmit.textContent = 'Удаление...';
     sendDeleteRequest(cardID)
-    .then(() => {
-      handleDeleteCard(cardElement);
-      removeCloseEventListeners();
-      removeSubmitEventListener();
-      deleteActionSubmitPopupSubmit.textContent = 'Удалено';
-      closePopup(submitPopup);
-      deleteActionSubmitPopupSubmit.textContent = 'Да';
+    .then((res) => {
+      if(res.ok) {
+        handleDeleteCard(cardElement);
+        removeCloseEventListeners();
+        removeSubmitEventListener();
+        deleteActionSubmitPopupSubmit.textContent = 'Удалено';
+        closePopup(submitPopup);
+        return Promise.resolve(res.json());
+      }
+      return Promise.reject(`Что-то пошло не так: ${res.status}`);
     })
     .catch((err) => {
       console.log(err);
       removeCloseEventListeners();
       removeSubmitEventListener();
+    })
+    .finally(() => {
+      deleteActionSubmitPopupSubmit.textContent = 'Да';
     });
   }
 
@@ -108,7 +113,7 @@ export function deleteCard(submitPopup, closeIcon, cardElement, cardID) {
 }
 
 export function createCard(name, link, likesAmount, ownerID, cardID, myLike = false) {
-    const card = document.querySelector('#card-template').content.cloneNode(true);
+    const card = cardTemplate.content.cloneNode(true);
     card.id = cardID;
     const cardPhoto = card.querySelector('.card__photo');
     cardPhoto.src = link;
@@ -136,7 +141,7 @@ export function createCard(name, link, likesAmount, ownerID, cardID, myLike = fa
     const likeCounter = card.querySelector('.card__likes-counter');
     likeCounter.textContent = likesAmount;
     const cardDeleteButton = card.querySelector('.card__delete-button');
-    if(ownerID === "3aa69ff877e5d2e63a6e38fc") {
+    if(ownerID === userId) {
       cardDeleteButton.addEventListener('click', (evt) => {
         const targetCard = evt.target.closest('.card');
         const targetCardID = card.id;
@@ -154,9 +159,7 @@ export function insertCardToHTML(card) {
 
 function putLikeOnCard(targetCard, cardID) {
   sendPutLikeRequest(cardID)
-  .then((res) => {
-    return res.json();
-  })
+  .then(checkResponse)
   .then((res) => {
     targetCard.querySelector('.card__like').classList.add('card__like_active');
     targetCard.querySelector('.card__likes-counter').textContent = res.likes.length;
@@ -168,9 +171,7 @@ function putLikeOnCard(targetCard, cardID) {
 
 function deleteLikeFromCard(targetCard, cardID) {
   sendDeleteLikeRequest(cardID)
-  .then((res) => {
-    return res.json();
-  })
+  .then(checkResponse)
   .then((res) => {
     targetCard.querySelector('.card__like').classList.remove('card__like_active');
     targetCard.querySelector('.card__likes-counter').textContent = res.likes.length;
@@ -183,16 +184,23 @@ function deleteLikeFromCard(targetCard, cardID) {
 export function handleUploadAvatarSubmit(avatarLink) {
   uploadAvatarPopupSubmit.textContent = 'Сохранение...';
   updateAvatar(avatarLink)
-  .then((res) => {
-    return res.json();
-  })
+  .then(checkResponse)
   .then((res) => {
     profileAvatar.src = res.avatar;
     uploadAvatarPopupSubmit.textContent = 'Сохранено';
     closePopup(uploadAvatarPopup);
-    uploadAvatarPopupSubmit.textContent = 'Сохранить';
   })
   .catch((err) => {
     console.log(err);
+  })
+  .finally(() => {
+    uploadAvatarPopupSubmit.textContent = 'Сохранить';
   });
+}
+
+function checkResponse(res) {
+  if(res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Что-то пошло не так: ${res.status}`);
 }

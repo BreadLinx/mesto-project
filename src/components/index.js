@@ -32,40 +32,33 @@ const uploadAvatarPopup = document.querySelector('#upload-new-avatar-popup');
 const uploadAvatarPopupSubmit = uploadAvatarPopup.querySelector('.popup__submit');
 const uploadAvatarForm = document.querySelector('#upload-new-avatar-form');
 const inputUploadAvatar = document.querySelector('#input-upload-avatar');
+const cardTemplate = document.querySelector('#card-template');
+let userId;
 
-export {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit};
+export {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit, cardTemplate, userId};
 
-uploadUserInformationRequest()
-.then((res) => {
-  return res.json();
+Promise.all([uploadUserInformationRequest(), getCardsArrayRequest()])
+.then((results) => {
+  return Promise.all(results.map((result => result.json())));
 })
-.then((res) => {
-  profileName.textContent = res.name;
-  profileInfoAbout.textContent = res.about;
-  profileAvatar.src = res.avatar;
-})
-.catch((err) => {
-  console.log('Ошибка при попытке загрузки профиля.');
-});
-
-getCardsArrayRequest()
-.then((res) => {
-  return res.json();
-})
-.then((res) => {
-  res.forEach((card) => {
+.then((results) => {
+  profileName.textContent = results[0].name;
+  profileInfoAbout.textContent = results[0].about;
+  profileAvatar.src = results[0].avatar;
+  userId = results[0]._id;
+  results[1].forEach((card) => {
     if(card.likes.length === 0) {
       insertCardToHTML(createCard(card.name, card.link, card.likes.length, card.owner._id, card._id, false));
     } else {
       const myLike = card.likes.some((user) => {
-        return user._id === '3aa69ff877e5d2e63a6e38fc';
+        return user._id === userId;
       });
       insertCardToHTML(createCard(card.name, card.link, card.likes.length, card.owner._id, card._id, myLike));
     }
   });
 })
 .catch((err) => {
-  console.log('Ошибка при попытке загрузки карточек.');
+  console.log(err);
 });
 
 popups.forEach((popup) => {
