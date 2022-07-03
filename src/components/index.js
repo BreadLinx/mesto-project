@@ -39,7 +39,13 @@ export {profileName, editProfileInputName, profileInfoAbout, editProfileInputWor
 
 Promise.all([uploadUserInformationRequest(), getCardsArrayRequest()])
 .then((results) => {
-  return Promise.all(results.map((result => result.json())));
+  const responseStatus = results.some((result) => {
+    return result.ok === true;
+  });
+  if(responseStatus) {
+    return Promise.all(results.map((result => result.json())));
+  }
+  return Promise.reject(`Что-то пошло не так: ${res.status}`);
 })
 .then((results) => {
   profileName.textContent = results[0].name;

@@ -6,6 +6,13 @@ const config = {
     },
 };
 
+export function checkResponse(res) {
+    if(res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+}
+
 export function uploadUserInformationRequest() {
     return fetch(`${config.baseUrl}/users/me`, {
         method: 'GET',
