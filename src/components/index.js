@@ -2,7 +2,9 @@ import '../pages/index.css';
 import {enableValidation} from './validate.js';
 import {handleEditFormSubmit, handleAddNewFormSubmit, createCard, insertCardToHTML, handleUploadAvatarSubmit} from './card';
 import {openPopup, closePopup} from './modal';
-import {uploadUserInformationRequest, getCardsArrayRequest} from './api';
+// import {uploadUserInformationRequest, getCardsArrayRequest} from './api';
+import {Api} from './api';
+
 
 const editProfileButton = document.querySelector('.profile__edit-button'); // кнопка изменения профиля
 const editProfilePopup = document.querySelector('#edit-profile-popup'); // попап изменения профиля
