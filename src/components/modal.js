@@ -35,9 +35,16 @@ class Popup {
     }
   }
 
-  // setEventListeners() {
-
-  // }
+  setEventListeners() {
+    this._popup.addEventListener('mousedown', (evt) => {
+      if (evt.target.classList.contains('popup_opened')) {
+        this._close();
+      }
+      if (evt.target.classList.contains('popup__close-icon')) {
+        this._close();
+      }
+    });
+  }
 }
 
 class PopupWithImage extends Popup {

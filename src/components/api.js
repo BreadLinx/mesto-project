@@ -88,8 +88,8 @@
 // }
 
 export class Api {
-    constructor({url, headers}) {
-        this._url = url;
+    constructor({baseUrl, headers}) {
+        this._url = baseUrl;
         this._headers = headers;
     }
 
@@ -97,7 +97,7 @@ export class Api {
         return res.ok ? res.json() : Promise.reject(`Что-то пошло не так: ${res.status}`);
     }
 
-    _uploadUserInformationRequest() {
+    uploadUserInformationRequest() {
         return fetch(`${this._url}/users/me`, {
             method: 'GET',
             headers: this._headers
@@ -105,7 +105,7 @@ export class Api {
         .then(this._checkResponce)
     }
 
-    _getCardsArrayRequest() {
+    getCardsArrayRequest() {
         return fetch(`${this._url}/cards`, {
             method: 'GET',
             headers: this._headers
@@ -113,7 +113,7 @@ export class Api {
         .then(this._checkResponce)
     }
 
-    _sendDeleteRequest(cardID) {
+    sendDeleteRequest(cardID) {
         return fetch(`${this._url}/cards/${cardID}`, {
             method: 'DELETE',
             headers: this._headers
@@ -121,7 +121,7 @@ export class Api {
         .then(this._checkResponce)
     }
 
-    _sendPutLikeRequest(cardID) {
+    sendPutLikeRequest(cardID) {
         return fetch(`${this._url}/cards/likes/${cardID}`, {
             method: 'PUT',
             headers: this._headers
@@ -129,7 +129,7 @@ export class Api {
         .then(this._checkResponce)
     }
 
-    _sendDeleteLikeRequest(cardID) {
+    sendDeleteLikeRequest(cardID) {
         return fetch(`${this._url}/cards/likes/${cardID}`, {
             method: 'DELETE',
             headers: this._headers
@@ -137,7 +137,7 @@ export class Api {
         .then(this._checkResponce)
     }
 
-    _getLikes(cardID) {
+    getLikes(cardID) {
         return fetch(`${this._url}/cards/likes/${cardID}`, {
             method: 'GET',
             headers: this._headers
@@ -145,7 +145,7 @@ export class Api {
         .then(this._checkResponce)
     }
 
-    _updateAvatar(avatarLink) {
+    updateAvatar(avatarLink) {
         return fetch(`${this._url}/users/me/avatar`, {
             method: 'PATCH',
             headers: this._headers,
@@ -155,7 +155,7 @@ export class Api {
         })
     }
 
-    _uploadNewUserInformationRequest(name, work) {
+    uploadNewUserInformationRequest(name, work) {
         return fetch(`${this._url}/users/me`, {
             method: 'PATCH',
             headers: this._headers,
@@ -166,7 +166,7 @@ export class Api {
         })
     }
 
-    _addNewCardRequest(placeName, placeLink) {
+    addNewCardRequest(placeName, placeLink) {
         return fetch(`${this._url}/cards`, {
             method: 'POST',
             headers: this._headers,

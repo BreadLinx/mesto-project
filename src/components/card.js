@@ -1,6 +1,6 @@
-import {openPopup, closePopup} from './modal';
-import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit, cardTemplate, userId} from './index';
-import {sendDeleteRequest, sendPutLikeRequest, sendDeleteLikeRequest, updateAvatar, uploadNewUserInformationRequest, addNewCardRequest, checkResponse} from './api';
+// import {openPopup, closePopup} from './modal';
+// import {profileName, editProfileInputName, profileInfoAbout, editProfileInputWork, editProfilePopup, addNewInputPlace, addNewInputPlaceLink, addNewPopup, cards, photoPopup, photoPopupPhoto, popupImage, deleteActionSubmitPopup, profileAvatar, uploadAvatarPopup, deleteActionSubmitPopupDeleteBtn, editProfilePopupSubmit, addNewPopupSubmit, deleteActionSubmitPopupSubmit, uploadAvatarPopupSubmit, cardTemplate, userId} from './index';
+// import {sendDeleteRequest, sendPutLikeRequest, sendDeleteLikeRequest, updateAvatar, uploadNewUserInformationRequest, addNewCardRequest, checkResponse} from './api';
 
 export function handleEditFormSubmit(evt) {
     evt.preventDefault();
