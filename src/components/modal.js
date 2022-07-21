@@ -14,7 +14,7 @@
 //   }
 // }
 
-class Popup {
+export class Popup {
   constructor(popupSelector) {
     this._popup = document.querySelector(popupSelector);
   }
@@ -31,23 +31,25 @@ class Popup {
 
   _handleEscClose(evt) {
     if(evt.key === "Escape") {
-      this.close();
+      const popup = document.querySelector('.popup_opened');
+      popup.classList.remove('popup_opened');
+      document.removeEventListener('keydown', this._handleEscClose);
     }
   }
 
   setEventListeners() {
     this._popup.addEventListener('mousedown', (evt) => {
       if (evt.target.classList.contains('popup_opened')) {
-        this._close();
+        this.close();
       }
       if (evt.target.classList.contains('popup__close-icon')) {
-        this._close();
+        this.close();
       }
     });
   }
 }
 
-class PopupWithImage extends Popup {
+export class PopupWithImage extends Popup {
   constructor(popupSelector) {
     super(popupSelector);
     this._photo = this._popup.querySelector('.popup__image');
@@ -64,16 +66,29 @@ class PopupWithImage extends Popup {
   }
 }
 
-class PopupWithForm extends Popup {
-  constructor(popupSelector, callback) {
+export class PopupWithForm extends Popup {
+  constructor(popupSelector, submitFunction) {
     super(popupSelector);
+    this._submitFunction = submitFunction;
+    this._popupForm = this._popup.querySelector('.popup__form');
   }
 
-  _getInputValues() {
+  close() {
+    super.close();
+    this._popupForm.reset();
+  }
 
+  getInputValues() {
+    const inputs = this._popupForm.querySelectorAll('.popup__input');
+    const inputsValues = [];
+    inputs.forEach((input, i) => {
+      inputsValues.push(input.value);
+      console.log(inputsValues);
+    });
   }
 
   setEventListeners() {
-    
+    super.setEventListeners();
+    this._popupForm.addEventListener('submit', this._submitFunction);
   }
 }

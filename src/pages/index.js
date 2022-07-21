@@ -3,11 +3,43 @@ import '../pages/index.css';
 // import {handleEditFormSubmit, handleAddNewFormSubmit, createCard, insertCardToHTML, handleUploadAvatarSubmit} from './card';
 // import {openPopup, closePopup} from './modal';
 import {Api} from '../components/api.js';
-import {Card} from '../components/card';
-import {editProfileButton, editProfilePopup, editProfilePopupSubmit, editProfileForm, editProfileInputName, profileName, editProfileInputWork, profileInfoAbout, addNewButton, addNewPopup, addNewPopupSubmit, addNewForm, addNewInputPlace, addNewInputPlaceLink, cards, popups, photoPopup, photoPopupPhoto, popupImage, profileAvatar, deleteActionSubmitPopup, deleteActionSubmitPopupDeleteBtn, deleteActionSubmitPopupSubmit, avatarOverlay, uploadAvatarPopup, uploadAvatarPopupSubmit, uploadAvatarForm, inputUploadAvatar, cardTemplate, apiConfig, userId} from '../utils/constants.js';
-const api = new Api(apiConfig);
+import {Card} from '../components/card.js';
+import {UserInfo} from '../components/userInfo.js';
+import {Popup, PopupWithImage, PopupWithForm} from '../components/modal.js';
+import {editProfileButton, editProfileInputName, profileName, editProfileInputWork, profileInfoAbout, editProfilePopupSelector, apiConfig, editProfilePopupSubmit, addNewPopupSelector, addNewPopupSubmit, addNewButton} from '../utils/constants.js';
+// import {editProfileButton, editProfilePopupSelector, editProfileForm, editProfileInputName, profileName, editProfileInputWork, profileInfoAbout, addNewButton, addNewPopup, addNewPopupSubmit, addNewForm, addNewInputPlace, addNewInputPlaceLink, cards, popups, photoPopup, photoPopupPhoto, popupImage, profileAvatar, deleteActionSubmitPopup, deleteActionSubmitPopupDeleteBtn, deleteActionSubmitPopupSubmit, avatarOverlay, uploadAvatarPopup, uploadAvatarPopupSubmit, uploadAvatarForm, inputUploadAvatar, cardTemplate, apiConfig, userId} from '../utils/constants.js';
+export const api = new Api(apiConfig);
+const userInfo = new UserInfo({nameSelector: '.profile__name', workSelector: '.profile__info-about'});
+export const photoPopup = new PopupWithImage(); 
+export const submitPopup = new PopupWithForm('#delete-action-submit-popup', );
 
+function handleEditFormSubmit(evt) {
+  evt.preventDefault();
+  editProfilePopupSubmit.textContent = 'Сохранение...';
+  userInfo.setUserInfo(editProfileInputName.value, editProfileInputWork.value);
+}
 
+// function handleAddNewFormSubmit(evt) {
+//   evt.preventDefault();
+//   addNewPopup.getInputValues();
+//   // if(addNewInputPlace.value !== '' && addNewInputPlaceLink.value !== '') {
+//   // addNewPopupSubmit.textContent = 'Сохранение...';
+//   // api.addNewCardRequest(addNewInputPlace.value, addNewInputPlaceLink.value) // переписать после добавления в класс Popup метода getInputValues
+//   // .then((res) => {
+//   //   cards.prepend(createCard(res.name, res.link, res.likes.length, res.owner._id, res._id, false));
+//   // })
+//   // .then(() => {
+//   //   addNewPopupSubmit.textContent = 'Сохранено';
+//   //   addNewPopup.close();
+//   // })
+//   // .catch((err) => {
+//   //   console.log(err);
+//   // })
+//   // .finally(() => {
+//   //   addNewPopupSubmit.textContent = 'Создать';
+//   // });
+//   // }
+// }
 
 // Promise.all([api.uploadUserInformationRequest(), api.getCardsArrayRequest()]) // ДОПИСАТЬ КОГДА БУДЕТ КЛАСС SECTION
 // .then((results) => {
@@ -43,38 +75,67 @@ const api = new Api(apiConfig);
 //   });
 // }); // ПРЕДВАРИТЕЛЬНО ГОТОВО
 
-editProfileButton.addEventListener('click', () => { // ЗАВТРА РАБОТАЕМ НАД ЭТИМ!!!
-    editProfileInputName.value = profileName.textContent;
-    editProfileInputWork.value = profileInfoAbout.textContent;
-    openPopup(editProfilePopup);
+
+export const editProfilePopup = new PopupWithForm(editProfilePopupSelector, handleEditFormSubmit);
+editProfilePopup.setEventListeners();
+editProfileButton.addEventListener('click', () => {
+    console.log(userInfo.getUserInfo());
+    // console.log(userInfo.getUserInfo());
+    // editProfileInputName.value = profileName.textContent;
+    // editProfileInputWork.value = profileInfoAbout.textContent;
+    // editProfilePopup.open();
 }); // евентлистенер на открытие попапа редактирования профиля
 
-editProfileForm.addEventListener('submit', handleEditFormSubmit);
+// // форма редактирования профиля
 
-// форма редактирования профиля
 
+const addNewPopup = new PopupWithForm(addNewPopupSelector, handleAddNewFormSubmit);
 addNewButton.addEventListener('click', () => {
-  openPopup(addNewPopup);
+  addNewPopup.open();
 }); // евентлистенер для открытия попапа
 
-addNewForm.addEventListener('submit', handleAddNewFormSubmit);  // евентлистенер для добавления нового места
+// addNewForm.addEventListener('submit', handleAddNewFormSubmit);  // евентлистенер для добавления нового места
 
-avatarOverlay.addEventListener('click', () => {
-  openPopup(uploadAvatarPopup);
-});
-
-uploadAvatarForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  handleUploadAvatarSubmit(inputUploadAvatar.value);
-  uploadAvatarForm.reset();
-});
-
-// // Валидация форм
-// enableValidation({
-//   formSelector: '.popup__form',
-//   inputSelector: '.popup__input',
-//   submitButtonSelector: '.popup__submit',
-//   submitButtonInactiveClass: 'popup__submit_disabled',
-//   inputErrorClass: 'popup__input_error',
-//   errorSpanOpenedClass: 'popup__error-message_opened',
+// avatarOverlay.addEventListener('click', () => {
+//   openPopup(uploadAvatarPopup);
 // });
+
+// uploadAvatarForm.addEventListener('submit', (evt) => {
+//   evt.preventDefault();
+//   handleUploadAvatarSubmit(inputUploadAvatar.value);
+//   uploadAvatarForm.reset();
+// });
+
+// // // Валидация форм
+
+
+
+
+
+
+// // enableValidation({
+// //   formSelector: '.popup__form',
+// //   inputSelector: '.popup__input',
+// //   submitButtonSelector: '.popup__submit',
+// //   submitButtonInactiveClass: 'popup__submit_disabled',
+// //   inputErrorClass: 'popup__input_error',
+// //   errorSpanOpenedClass: 'popup__error-message_opened',
+// // });
+
+ // ОБНОВЛЕНИЕ АВАТАРА ПЕРЕДЕЛАТЬ
+// export function handleUploadAvatarSubmit(avatarLink) {
+//   uploadAvatarPopupSubmit.textContent = 'Сохранение...';
+//   updateAvatar(avatarLink)
+//   .then(checkResponse)
+//   .then((res) => {
+//     profileAvatar.src = res.avatar;
+//     uploadAvatarPopupSubmit.textContent = 'Сохранено';
+//     closePopup(uploadAvatarPopup);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   })
+//   .finally(() => {
+//     uploadAvatarPopupSubmit.textContent = 'Сохранить';
+//   });
+// }
