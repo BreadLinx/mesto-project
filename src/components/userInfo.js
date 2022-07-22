@@ -14,12 +14,14 @@ export class UserInfo {
         .then((res) => {
             user.name = res.name;
             user.work = res.about;
-            user.id = res._id;
+            user.id = res.id;
             user.avatar = res.avatar;
-            return user;
         })
         .catch((err) => {
             console.log(err);
+        })
+        .finally(() => {
+            return user;
         });
     }
 

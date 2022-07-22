@@ -1,66 +1,4 @@
-export function enableValidation(config) {
-  const formList = Array.from(document.querySelectorAll(config.formSelector));
-  formList.forEach((formElement) => {
-    setEventListener(formElement);
-  });
-
-  // function setEventListener(formElement) {
-  //   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
-  //   const buttonElement = formElement.querySelector(config.submitButtonSelector);
-  //   formElement.addEventListener('submit', (evt) => {
-  //     evt.preventDefault();
-  //     formElement.reset();
-  //     toggleButtonState(inputList, buttonElement);
-  //   });
-  //   toggleButtonState(inputList, buttonElement);
-  //   inputList.forEach((inputElement) => {
-  //     inputElement.addEventListener('input', () => {
-  //       isValid(formElement, inputElement);
-  //       toggleButtonState(inputList, buttonElement);
-  //     });
-  //   });
-  // }
-
-  // function isValid(formElement, input) {
-  //   if(!input.validity.valid) {
-  //     showInputError(formElement, input, input.validationMessage);
-  //   } else {
-  //     hideInputError(formElement, input);
-  //   }
-  // }
-  
-  // function hideInputError(formElement, inputElement) {
-  //   const errorElement = formElement.querySelector(`#${inputElement.id}-span`);
-  //   inputElement.classList.remove(config.inputErrorClass);
-  //   errorElement.classList.remove(config.errorSpanOpenedClass);
-  //   errorElement.textContent = '';
-  // }
-  
-  // function showInputError(formElement, inputElement, errorText = 'В поле ввода допущена ошибка') {
-  //   const errorElement = formElement.querySelector(`#${inputElement.id}-span`);
-  //   inputElement.classList.add(config.inputErrorClass);
-  //   errorElement.textContent = errorText;
-  //   errorElement.classList.add(config.errorSpanOpenedClass);
-  // }
-  
-  // function hasInvalidInput(inputList) {
-  //   return inputList.some((inputElement) => {
-  //     return !inputElement.validity.valid;
-  //   });
-  // }
-  
-  // function toggleButtonState(inputList, buttonElement) {
-  //   if(hasInvalidInput(inputList)) {
-  //     buttonElement.classList.add(config.submitButtonInactiveClass);
-  //     buttonElement.setAttribute('disabled', 0);
-  //   } else {
-  //     buttonElement.classList.remove(config.submitButtonInactiveClass);
-  //     buttonElement.removeAttribute('disabled', 0);
-  //   }
-  // }
-}
-
-class FormValidator {
+export class FormValidator {
   constructor({formSelector, inputSelector, submitButtonSelector, submitButtonInactiveClass, inputErrorClass, errorSpanOpenedClass}, formElement) {
     this._formSelector = formSelector;
     this._inputSelector = inputSelector;
@@ -72,47 +10,46 @@ class FormValidator {
   }
 
   enableValidation() {
-   const form = document.querySelector(this._formElement);
-   _setEventListener(form);
+    this._setEventListener();
   }
 
-  _setEventListener(formElement) {
-    const inputList = Array.from(formElement.querySelectorAll(this._inputSelector));
-    const buttonElement = formElement.querySelector(this._submitButtonSelector);
-    formElement.addEventListener('submit', (evt) => {
+  _setEventListener() {
+    const inputList = Array.from(this._formElement.querySelectorAll(this._inputSelector));
+    const buttonElement = this._formElement.querySelector(this._submitButtonSelector);
+    this._formElement.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      formElement.reset();
+      this._formElement.reset();
       this._toggleButtonState(inputList, buttonElement);
     });
     this._toggleButtonState(inputList, buttonElement);
     inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', () => {
-        this._isValid(formElement, inputElement);
+        this._isValid(inputElement);
         this._toggleButtonState(inputList, buttonElement);
       });
     });
   }
 
-  _isValid(formElement, input) {
+  _isValid(input) {
     if(!input.validity.valid) {
-      this._showInputError(formElement, input, input.validationMessage);
+      this._showInputError(input, input.validationMessage);
     } else {
-      this._hideInputError(formElement, input);
+      this._hideInputError(input);
     }
   }
 
-  _hideInputError(formElement, inputElement) {
-    const errorElement = formElement.querySelector(`#${inputElement.id}-span`);
-    inputElement.classList.remove(config.inputErrorClass);
-    errorElement.classList.remove(config.errorSpanOpenedClass);
+  _hideInputError(inputElement) {
+    const errorElement = this._formElement.querySelector(`#${inputElement.id}-span`);
+    inputElement.classList.remove(this._inputErrorClass);
+    errorElement.classList.remove(this._errorSpanOpenedClass);
     errorElement.textContent = '';
   }
 
-  _showInputError(formElement, inputElement, errorText = 'В поле ввода допущена ошибка') {
-    const errorElement = formElement.querySelector(`#${inputElement.id}-span`);
-    inputElement.classList.add(config.inputErrorClass);
+  _showInputError(inputElement, errorText = 'В поле ввода допущена ошибка') {
+    const errorElement = this._formElement.querySelector(`#${inputElement.id}-span`);
+    inputElement.classList.add(this._inputErrorClass);
     errorElement.textContent = errorText;
-    errorElement.classList.add(config.errorSpanOpenedClass);
+    errorElement.classList.add(this._errorSpanOpenedClass);
   }
 
   _hasInvalidInput(inputList) {
@@ -123,10 +60,10 @@ class FormValidator {
 
   _toggleButtonState(inputList, buttonElement) {
     if(this._hasInvalidInput(inputList)) {
-      buttonElement.classList.add(config.submitButtonInactiveClass);
+      buttonElement.classList.add(this._submitButtonInactiveClass);
       buttonElement.setAttribute('disabled', 0);
     } else {
-      buttonElement.classList.remove(config.submitButtonInactiveClass);
+      buttonElement.classList.remove(this._submitButtonInactiveClass);
       buttonElement.removeAttribute('disabled', 0);
     }
   }

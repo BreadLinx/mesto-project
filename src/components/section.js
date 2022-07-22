@@ -1,19 +1,19 @@
-class Section {
-    constructor({items, renderer}, containerSelector) {
+export class Section {
+    constructor({items = null, renderer}, containerSelector) {
         this._containerSelector = containerSelector;
         this._items = items;
         this._renderer = renderer;
     }
 
-    renderItem() {
+    renderItems() {
         const container = document.querySelector(this._containerSelector);
         this._items.forEach(item => {
-            this._renderer(item);
+            this._renderer(item, container);
         });
     }
 
     addItem(element) {
         const container = document.querySelector(this._containerSelector);
-        container.append(element);
+        this._renderer(element, container)
     }
 }
