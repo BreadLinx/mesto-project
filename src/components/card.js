@@ -1,7 +1,7 @@
 import {photoPopup, submitPopup} from "../pages/index.js";
 import {photoPopupPhoto, photoPopupDescription} from '../utils/constants.js'
-import {api} from './api.js';
-import {userId, deleteActionSubmitPopup, deleteActionSubmitPopupSubmit, deleteActionSubmitPopupCloseBtn} from '../utils/constants.js';
+import {api, userInfo} from '../pages/index.js';
+import {deleteActionSubmitPopup, deleteActionSubmitPopupSubmit, deleteActionSubmitPopupCloseBtn} from '../utils/constants.js';
 
 export class Card {
   constructor(name, link, likesAmount, ownerID, cardID, myLike = false, selector) {
@@ -43,7 +43,7 @@ export class Card {
     const likeCounter = card.querySelector('.card__likes-counter');
     likeCounter.textContent = this._likesAmount;
     const cardDeleteButton = card.querySelector('.card__delete-button');
-    if(this._ownerID === userId) {
+    if(this._ownerID === userInfo.getUserInfo().id) {
       cardDeleteButton.addEventListener('click', (evt) => {
         const targetCard = evt.target.closest('.card');
         const targetCardID = card.id;
@@ -66,7 +66,7 @@ export class Card {
       deleteActionSubmitPopupSubmit.textContent = 'Удаление...';
       api.sendDeleteRequest(cardID)
       .then(() => {
-        this._handleDeleteCard(cardElement);
+        Card.prototype._handleDeleteCard(cardElement);
         removeCloseEventListeners();
         removeSubmitEventListener();
         deleteActionSubmitPopupSubmit.textContent = 'Удалено';
@@ -99,7 +99,7 @@ export class Card {
       
     function closeSubmitPopupByCloseIcon() {
       removeSubmitEventListener();
-     removeCloseEventListeners();
+      removeCloseEventListeners();
     }
       
     function removeSubmitEventListener() {

@@ -2,17 +2,19 @@ import '../pages/index.css';
 import {Api} from '../components/api.js';
 import {Card} from '../components/card.js';
 import {UserInfo} from '../components/userInfo.js';
-import {Popup, PopupWithImage, PopupWithForm} from '../components/modal.js';
-import {editProfileButton, editProfileInputName, profileName, editProfileInputWork, profileInfoAbout, editProfilePopupSelector, apiConfig, editProfilePopupSubmit, addNewPopupSelector, addNewPopupSubmit, addNewButton, userObject, uploadAvatarPopupSelector, avatarOverlay} from '../utils/constants.js';
+import {PopupWithImage, PopupWithForm} from '../components/modal.js';
+import {editProfileButton, editProfileInputName, profileName, editProfileInputWork, profileInfoAbout, editProfilePopupSelector, apiConfig, editProfilePopupSubmit, addNewPopupSelector, addNewPopupSubmit, addNewButton, uploadAvatarPopupSelector, avatarOverlay, uploadAvatarPopupSubmit, profileAvatar} from '../utils/constants.js';
 import {FormValidator} from '../components/validate.js';
 import {Section} from '../components/section.js';
 export const api = new Api(apiConfig);
-const userInfo = new UserInfo({nameSelector: '.profile__name', workSelector: '.profile__info-about'});
-export const photoPopup = new PopupWithImage();
-export const submitPopup = new PopupWithForm('#delete-action-submit-popup', );
+export const userInfo = new UserInfo(profileName, profileInfoAbout, profileAvatar);
+export const photoPopup = new PopupWithImage('#photo-popup');
+export const submitPopup = new PopupWithForm('#delete-action-submit-popup');
 export const editProfilePopup = new PopupWithForm(editProfilePopupSelector, handleEditFormSubmit);
 export const addNewPopup = new PopupWithForm(addNewPopupSelector, handleAddNewFormSubmit);
-export const uploadAvatarPopup = new PopupWithForm(uploadAvatarPopupSelector, handleUploadAvatarSubmit)
+export const uploadAvatarPopup = new PopupWithForm(uploadAvatarPopupSelector, handleUploadAvatarSubmit);
+photoPopup.setEventListeners();
+submitPopup.setEventListeners();
 
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
@@ -21,60 +23,49 @@ function handleEditFormSubmit(evt) {
   userInfo.setUserInfo(inputValues[0], inputValues[1]);
 }
 
-// function handleAddNewFormSubmit(evt) {  // Доделать функцию добавления новой карточки
-//   evt.preventDefault();
-//   const inputValues = addNewPopup.getInputValues();
-//   if(inputValues.length === 2) {
-//   addNewPopupSubmit.textContent = 'Сохранение...';
-//   api.addNewCardRequest(inputValues[0], inputValues[1])
-//   .then((res) => {
-//     const rederer = new Section({
-//       null,
-//       rederer: function(element, container) {
-//           const card = new Card();
-//       }
-//   }, '.elements');
-//     cards.prepend(createCard(res.name, res.link, res.likes.length, res.owner._id, res._id, false));
-//   })
-//   .then(() => {
-//     addNewPopupSubmit.textContent = 'Сохранено';
-//     addNewPopup.close();
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   })
-//   .finally(() => {
-//     addNewPopupSubmit.textContent = 'Создать';
-//   });
-//   }
-// }
+function handleUploadAvatarSubmit(evt) {
+  evt.preventDefault();
+  uploadAvatarPopupSubmit.textContent = 'Сохранение...';
+  const inputValues = uploadAvatarPopup.getInputValues();
+  userInfo.setUserAvatar(inputValues[0]);
+}
 
-// export function handleUploadAvatarSubmit(avatarLink) {
-//   uploadAvatarPopupSubmit.textContent = 'Сохранение...';
-//   updateAvatar(avatarLink)
-//   .then(checkResponse)
-//   .then((res) => {
-//     profileAvatar.src = res.avatar;
-//     uploadAvatarPopupSubmit.textContent = 'Сохранено';
-//     closePopup(uploadAvatarPopup);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   })
-//   .finally(() => {
-//     uploadAvatarPopupSubmit.textContent = 'Сохранить';
-//   });
-// }
+function handleAddNewFormSubmit(evt) {  // Доделать функцию добавления новой карточки
+  evt.preventDefault();
+  const inputValues = addNewPopup.getInputValues();
+  addNewPopupSubmit.textContent = 'Сохранение...';
+  api.addNewCardRequest(inputValues[0], inputValues[1])
+  .then((res) => {
+    addNewCardSectionInstanse.addItem(res);
+  })
+  .then(() => {
+    addNewPopupSubmit.textContent = 'Сохранено';
+    addNewPopup.close();
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    addNewPopupSubmit.textContent = 'Создать';
+  });
+}
 
-Promise.all([userInfo.getUserInfo(), api.getCardsArrayRequest()])
+const addNewCardSectionInstanse = new Section({
+  items: null,
+  renderer: function(card, container) {
+      const cardInstanse = new Card(card.name, card.link, card.likes.length, card.owner._id, card._id, false, '#card-template');
+      container.prepend(cardInstanse.createCard());
+  }
+}, '.elements');
+
+Promise.all([api.uploadUserInformationRequest(), api.getCardsArrayRequest()])
 .then((results) => {
-  profileName.textContent = results[0].name;
-  profileInfoAbout.textContent = results[0].work;
-  profileAvatar.src = results[0].avatar;
-  userObject.id = results[0].id;
-  userObject.name = results[0].name;
-  userObject.work = results[0].work;
-  userObject.avatar = results[0].avatar;
+  userInfo._name = results[0].name;
+  userInfo._work = results[0].about;
+  userInfo._avatar = results[0].avatar;
+  userInfo._id = results[0]._id;
+  userInfo.updateUserInfo();
+  userInfo.updateUserAvatar();
   const sectionInstanse = new Section({
     items: results[1],
     renderer: function(card, container) {
@@ -82,7 +73,7 @@ Promise.all([userInfo.getUserInfo(), api.getCardsArrayRequest()])
         const cardInstanse = new Card(card.name, card.link, card.likes.length, card.owner._id, card._id, false, '#card-template');
         container.append(cardInstanse.createCard());
       } else {
-        const myLike = card.likes.some(user => {user._id === userObject.id});
+        const myLike = card.likes.some(user => {return user._id === userInfo.getUserInfo().id});
         const cardInstanse = new Card(card.name, card.link, card.likes.length, card.owner._id, card._id, myLike, '#card-template');
         container.append(cardInstanse.createCard());
       }

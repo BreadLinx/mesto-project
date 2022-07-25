@@ -5,19 +5,19 @@ export class Popup {
 
   open() {
     this._popup.classList.add('popup_opened');
-    document.addEventListener('keydown', this._handleEscClose);
+    document.addEventListener('keydown', Popup.prototype._handleEscClose);
   }
 
   close() {
     this._popup.classList.remove('popup_opened');
-    document.removeEventListener('keydown', this._handleEscClose);
+    document.removeEventListener('keydown', Popup.prototype._handleEscClose);
   }
 
   _handleEscClose(evt) {
     if(evt.key === "Escape") {
       const popup = document.querySelector('.popup_opened');
       popup.classList.remove('popup_opened');
-      document.removeEventListener('keydown', this._handleEscClose);
+      document.removeEventListener('keydown', Popup.prototype._handleEscClose);
     }
   }
 
@@ -38,14 +38,12 @@ export class PopupWithImage extends Popup {
     super(popupSelector);
     this._photoElement = this._popup.querySelector('.popup__image');
     this._descriptionElement = this._popup.querySelector('.popup__description');
-    this._src = src;
-    this._text = text;
   }
 
-  open() {
-    this._photoElement.src = this._src;
-    this._photoElement.alt = this._text;
-    this._descriptionElement.textContent = this._text
+  open(src, text) {
+    this._photoElement.src = src;
+    this._photoElement.alt = text;
+    this._descriptionElement.textContent = text;
     super.open();
   }
 }

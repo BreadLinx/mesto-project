@@ -64,6 +64,7 @@ export class Api {
                 avatar: avatarLink
             })
         })
+        .then(this._checkResponce)
     }
 
     uploadNewUserInformationRequest(name, work) {
@@ -75,6 +76,7 @@ export class Api {
                 about: work
             })
         })
+        .then(this._checkResponce)
     }
 
     addNewCardRequest(placeName, placeLink) {
