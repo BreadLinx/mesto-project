@@ -49,9 +49,9 @@
         <div class="popup__container">
           <h2 class="popup__title">Редактировать профиль</h2>
           <form class="popup__form" id="edit-profile-form" name="editForm" novalidate>
-            <input required minlength="2" maxlength="40" id="input-name" class="popup__input" type="text" name="Имя профиля" placeholder="Как вас зовут?" value="">
+            <input required minlength="2" maxlength="40" id="input-name" class="popup__input" type="text" name="name" placeholder="Как вас зовут?" value="">
             <span id="input-name-span" class="popup__error-message"></span>
-            <input required minlength="2" maxlength="200" id="input-work" class="popup__input" type="text" name="Род деятельности" placeholder="Чем вы занимаетесь?" value="">
+            <input required minlength="2" maxlength="200" id="input-work" class="popup__input" type="text" name="work" placeholder="Чем вы занимаетесь?" value="">
             <span id="input-work-span" class="popup__error-message"></span>
             <button class="popup__submit" id="edit-profile-form-submit" type="submit">Сохранить</button>
           </form>
@@ -62,9 +62,9 @@
         <div class="popup__container">
           <h2 class="popup__title">Новое место</h2>
           <form class="popup__form" id="add-new-form" name="addNewform">
-            <input required minlength="2" maxlength="30" id="input-new-place" class="popup__input" type="text" name="Название нового места" placeholder="Название">
+            <input required minlength="2" maxlength="30" id="input-new-place" class="popup__input" type="text" name="placeName" placeholder="Название">
             <span id="input-new-place-span" class="popup__error-message"></span>
-            <input required id="input-new-place-link" class="popup__input" type="url" name="Ссылка на картинку" placeholder="Ссылка на картинку">
+            <input required id="input-new-place-link" class="popup__input" type="url" name="placeLink" placeholder="Ссылка на картинку">
             <span id="input-new-place-link-span" class="popup__error-message"></span>
             <button class="popup__submit" id="add-new-form-submit" type="submit">Создать</button>
           </form>
@@ -93,7 +93,7 @@
         <div class="popup__container popup__container_type_upload-avatar">
           <h2 class="popup__title">Обновить аватар</h2>
           <form class="popup__form" id="upload-new-avatar-form" name="uploadAvatarForm">
-            <input required class="popup__input" type="url" name="Ссылка на картинку" placeholder="Ссылка на картинку" id="input-upload-avatar"></input>
+            <input required class="popup__input" type="url" name="avatarLink" placeholder="Ссылка на картинку" id="input-upload-avatar"></input>
             <span id="input-upload-avatar-span" class="popup__error-message"></span>
             <button class="popup__submit" id="upload-avatar-form-sumbit" type="submit">Сохранить</button>
           </form>

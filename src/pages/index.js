@@ -1,15 +1,17 @@
 import '../pages/index.css';
-import {Api} from '../components/api.js';
-import {Card} from '../components/card.js';
-import {UserInfo} from '../components/userInfo.js';
-import {PopupWithImage, PopupWithForm} from '../components/modal.js';
-import {editProfileButton, editProfileInputName, profileName, editProfileInputWork, profileInfoAbout, editProfilePopupSelector, apiConfig, editProfilePopupSubmit, addNewPopupSelector, addNewPopupSubmit, addNewButton, uploadAvatarPopupSelector, avatarOverlay, uploadAvatarPopupSubmit, profileAvatar} from '../utils/constants.js';
-import {FormValidator} from '../components/validate.js';
-import {Section} from '../components/section.js';
+import {Api} from '../components/Api.js';
+import {Card} from '../components/Card.js';
+import {UserInfo} from '../components/UserInfo.js';
+import {PopupWithImage} from '../components/PopupWithImage.js';
+import {PopupWithForm} from '../components/PopupWithForm.js';
+import {PopupActionSubmit} from '../components/PopupActionSubmit.js';
+import {editProfileButton, editProfilePopupSelector, apiConfig, addNewPopupSelector, addNewButton, uploadAvatarPopupSelector, avatarOverlay} from '../utils/constants.js';
+import {FormValidator} from '../components/FormValidator.js';
+import {Section} from '../components/Section.js';
 export const api = new Api(apiConfig);
-export const userInfo = new UserInfo(profileName, profileInfoAbout, profileAvatar);
+export const userInfo = new UserInfo();
 export const photoPopup = new PopupWithImage('#photo-popup');
-export const submitPopup = new PopupWithForm('#delete-action-submit-popup');
+export const submitPopup = new PopupActionSubmit('#delete-action-submit-popup', handleRemoveCardSubmit);
 export const editProfilePopup = new PopupWithForm(editProfilePopupSelector, handleEditFormSubmit);
 export const addNewPopup = new PopupWithForm(addNewPopupSelector, handleAddNewFormSubmit);
 export const uploadAvatarPopup = new PopupWithForm(uploadAvatarPopupSelector, handleUploadAvatarSubmit);
@@ -18,100 +20,195 @@ submitPopup.setEventListeners();
 
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
-  editProfilePopupSubmit.textContent = 'Сохранение...';
+  editProfilePopup.renderLoading(true);
   const inputValues = editProfilePopup.getInputValues();
-  userInfo.setUserInfo(inputValues[0], inputValues[1]);
+  api.uploadNewUserInformationRequest(inputValues['name'], inputValues['work'])
+  .then((res) => {
+    userInfo.setUserInfo({name: res.name, about: res.about, avatar: res.avatar, _id: res._id})
+    editProfilePopup.renderLoading(true, 'Сохранено');
+  })
+  .then(() => {
+    editProfilePopup.close();
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    editProfilePopup.renderLoading(false);
+  });
 }
 
 function handleUploadAvatarSubmit(evt) {
   evt.preventDefault();
-  uploadAvatarPopupSubmit.textContent = 'Сохранение...';
+  uploadAvatarPopup.renderLoading(true);
   const inputValues = uploadAvatarPopup.getInputValues();
-  userInfo.setUserAvatar(inputValues[0]);
+  api.updateAvatar(inputValues['avatarLink'])
+  .then((res) => {
+    userInfo.setUserInfo({name: res.name, about: res.about, avatar: res.avatar, _id: res._id})
+    uploadAvatarPopup.renderLoading(true, 'Сохранено');
+  })
+  .then(() => {
+    uploadAvatarPopup.close();
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    uploadAvatarPopup.renderLoading(false);
+  });
 }
 
 function handleAddNewFormSubmit(evt) {  // Доделать функцию добавления новой карточки
   evt.preventDefault();
   const inputValues = addNewPopup.getInputValues();
-  addNewPopupSubmit.textContent = 'Сохранение...';
-  api.addNewCardRequest(inputValues[0], inputValues[1])
+  addNewPopup.renderLoading(true);
+  api.addNewCardRequest(inputValues['placeName'], inputValues['placeLink'])
   .then((res) => {
     addNewCardSectionInstanse.addItem(res);
+    addNewPopup.renderLoading(true, 'Сохранено');
   })
   .then(() => {
-    addNewPopupSubmit.textContent = 'Сохранено';
     addNewPopup.close();
   })
   .catch((err) => {
     console.log(err);
   })
   .finally(() => {
-    addNewPopupSubmit.textContent = 'Создать';
+    addNewPopup.renderLoading(false);
+  });
+}
+
+function handlePutLikeOnCard(card) {
+  api.sendPutLikeRequest(card.id)
+    .then((res) => {
+      card._likeElement.classList.add('card__like_active');
+      card._likeCounterElement.textContent = res.likes.length;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function handleDeleteLikeFromCard(card) {
+  api.sendDeleteLikeRequest(card.id)
+    .then((res) => {
+      card._likeElement.classList.remove('card__like_active');
+      card._likeCounterElement.textContent = res.likes.length;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function handleRemoveCardSubmit(card) {
+  submitPopup.renderLoading(true, 'Удаление...');
+  api.sendDeleteRequest(card.id)
+  .then(() => {
+    card._handleDeleteCard(card.cardPhotoElement.closest('.card'));
+    submitPopup.renderLoading(true, 'Удалено');
+    submitPopup.close();
+    return Promise.resolve();
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    submitPopup.renderLoading(false);
   });
 }
 
 const addNewCardSectionInstanse = new Section({
   items: null,
-  renderer: function(card, container) {
-      const cardInstanse = new Card(card.name, card.link, card.likes.length, card.owner._id, card._id, false, '#card-template');
-      container.prepend(cardInstanse.createCard());
+  renderer: function(card) {
+      const cardInstanse = new Card(
+        {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike: false, id: card._id},
+        {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
+        {handlePutLikeOnCard, handleDeleteLikeFromCard}
+      );
+      return cardInstanse.createCard();
   }
 }, '.elements');
 
+const formValidators = {};
+
+const enableValidation = (config) => {
+  const formList = Array.from(document.forms);
+  formList.forEach((formElement) => {
+    const validator = new FormValidator(config, formElement);
+    const formName = formElement.getAttribute('name');
+    formValidators[formName] = validator;
+    validator.enableValidation();
+  });
+};
+
+enableValidation({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__submit',
+  submitButtonInactiveClass: 'popup__submit_disabled',
+  inputErrorClass: 'popup__input_error',
+  errorSpanOpenedClass: 'popup__error-message_opened',
+});
+
 Promise.all([api.uploadUserInformationRequest(), api.getCardsArrayRequest()])
 .then((results) => {
-  userInfo._name = results[0].name;
-  userInfo._work = results[0].about;
-  userInfo._avatar = results[0].avatar;
-  userInfo._id = results[0]._id;
-  userInfo.updateUserInfo();
-  userInfo.updateUserAvatar();
-  const sectionInstanse = new Section({
-    items: results[1],
-    renderer: function(card, container) {
+  userInfo.setUserInfo({name: results[0].name, about: results[0].about, avatar: results[0].avatar, _id: results[0]._id});
+  addNewCardSectionInstanse.setNewItems(results[1]);
+  addNewCardSectionInstanse.setNewRenderer(
+    function renderer(card) {
       if(card.likes.length === 0) {
-        const cardInstanse = new Card(card.name, card.link, card.likes.length, card.owner._id, card._id, false, '#card-template');
-        container.append(cardInstanse.createCard());
+        const cardInstanse = new Card(
+          {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike: false, id: card._id},
+          {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
+          {handlePutLikeOnCard, handleDeleteLikeFromCard}
+        );
+        return cardInstanse.createCard();
       } else {
         const myLike = card.likes.some(user => {return user._id === userInfo.getUserInfo().id});
-        const cardInstanse = new Card(card.name, card.link, card.likes.length, card.owner._id, card._id, myLike, '#card-template');
-        container.append(cardInstanse.createCard());
+        const cardInstanse = new Card(
+          {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike, id: card._id},
+          {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
+          {handlePutLikeOnCard, handleDeleteLikeFromCard}
+        );
+        return cardInstanse.createCard();
       }
     }
-  }, '.elements');
-  sectionInstanse.renderItems();
+  );
+  addNewCardSectionInstanse.renderItems();
 })
 .catch((err) => {
   console.log(err);
+})
+.finally(() => {
+  addNewCardSectionInstanse.setNewItems(null);
+  addNewCardSectionInstanse.setNewRenderer(
+    function renderer(card) {
+      const cardInstanse = new Card(
+        {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike: false, id: card._id},
+        {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
+        {handlePutLikeOnCard, handleDeleteLikeFromCard}
+      );
+      return cardInstanse.createCard();
+    }
+  );
 });
 
-editProfilePopup.setEventListeners(); // Вешаем обработчики закрытия(Крестик, оверлей) на попап редактирования профиля
+editProfilePopup.setEventListeners();
 editProfileButton.addEventListener('click', () => {
-    editProfileInputName.value = userInfo.getUserInfo().name;
-    editProfileInputWork.value = userInfo.getUserInfo().work;
+    const {name, work} = userInfo.getUserInfo();
+    editProfilePopup.setInputValues({name: name, work: work});
+    formValidators['editForm'].resetValidation();
     editProfilePopup.open();
-}); // евентлистенер для открытия попапа редактирования профиля
+});
 
 addNewPopup.setEventListeners();
 addNewButton.addEventListener('click', () => {
+  formValidators['addNewform'].resetValidation();
   addNewPopup.open();
-}); // евентлистенер для открытия попапа добавления карточки
+});
 
 uploadAvatarPopup.setEventListeners();
 avatarOverlay.addEventListener('click', () => {
+  formValidators['uploadAvatarForm'].resetValidation();
   uploadAvatarPopup.open();
-}); // евентлистенер для открытия попапа обновление аватара
-
-// Валидация форм
-const forms = Array.from(document.forms);
-forms.forEach((form) => {
-  const formInstanse = new FormValidator({
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__submit',
-    submitButtonInactiveClass: 'popup__submit_disabled',
-    inputErrorClass: 'popup__input_error',
-    errorSpanOpenedClass: 'popup__error-message_opened',
-  }, form);
-  formInstanse.enableValidation();
 });
