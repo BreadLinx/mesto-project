@@ -5,13 +5,13 @@ import {UserInfo} from '../components/UserInfo.js';
 import {PopupWithImage} from '../components/PopupWithImage.js';
 import {PopupWithForm} from '../components/PopupWithForm.js';
 import {PopupActionSubmit} from '../components/PopupActionSubmit.js';
-import {editProfileButton, editProfilePopupSelector, apiConfig, addNewPopupSelector, addNewButton, uploadAvatarPopupSelector, avatarOverlay} from '../utils/constants.js';
+import {editProfileButton, apiConfig, addNewButton, uploadAvatarPopupSelector, avatarOverlay, photoPopupSelector, deleteActionSubmitSelector, editProfilePopupSelector, addNewPopupSelector, cardTemplateSelector, profileNameSelector, profileWorkSelector, profileAvatarSelector} from '../utils/constants.js';
 import {FormValidator} from '../components/FormValidator.js';
 import {Section} from '../components/Section.js';
 export const api = new Api(apiConfig);
-export const userInfo = new UserInfo();
-export const photoPopup = new PopupWithImage('#photo-popup');
-export const submitPopup = new PopupActionSubmit('#delete-action-submit-popup', handleRemoveCardSubmit);
+export const userInfo = new UserInfo({nameSelector: profileNameSelector, workSelector: profileWorkSelector, avatarSelector: profileAvatarSelector});
+export const photoPopup = new PopupWithImage(photoPopupSelector);
+export const submitPopup = new PopupActionSubmit(deleteActionSubmitSelector, handleRemoveCardSubmit);
 export const editProfilePopup = new PopupWithForm(editProfilePopupSelector, handleEditFormSubmit);
 export const addNewPopup = new PopupWithForm(addNewPopupSelector, handleAddNewFormSubmit);
 export const uploadAvatarPopup = new PopupWithForm(uploadAvatarPopupSelector, handleUploadAvatarSubmit);
@@ -24,7 +24,7 @@ function handleEditFormSubmit(evt) {
   const inputValues = editProfilePopup.getInputValues();
   api.uploadNewUserInformationRequest(inputValues['name'], inputValues['work'])
   .then((res) => {
-    userInfo.setUserInfo({name: res.name, about: res.about, avatar: res.avatar, _id: res._id})
+    userInfo.setUserInfo(res)
     editProfilePopup.renderLoading(true, 'Сохранено');
   })
   .then(() => {
@@ -44,7 +44,7 @@ function handleUploadAvatarSubmit(evt) {
   const inputValues = uploadAvatarPopup.getInputValues();
   api.updateAvatar(inputValues['avatarLink'])
   .then((res) => {
-    userInfo.setUserInfo({name: res.name, about: res.about, avatar: res.avatar, _id: res._id})
+    userInfo.setUserInfo(res)
     uploadAvatarPopup.renderLoading(true, 'Сохранено');
   })
   .then(() => {
@@ -58,7 +58,7 @@ function handleUploadAvatarSubmit(evt) {
   });
 }
 
-function handleAddNewFormSubmit(evt) {  // Доделать функцию добавления новой карточки
+function handleAddNewFormSubmit(evt) {
   evt.preventDefault();
   const inputValues = addNewPopup.getInputValues();
   addNewPopup.renderLoading(true);
@@ -81,8 +81,7 @@ function handleAddNewFormSubmit(evt) {  // Доделать функцию до�
 function handlePutLikeOnCard(card) {
   api.sendPutLikeRequest(card.id)
     .then((res) => {
-      card._likeElement.classList.add('card__like_active');
-      card._likeCounterElement.textContent = res.likes.length;
+      card.addLike(res);
     })
     .catch((err) => {
       console.log(err);
@@ -92,8 +91,7 @@ function handlePutLikeOnCard(card) {
 function handleDeleteLikeFromCard(card) {
   api.sendDeleteLikeRequest(card.id)
     .then((res) => {
-      card._likeElement.classList.remove('card__like_active');
-      card._likeCounterElement.textContent = res.likes.length;
+      card.deleteLike(res);
     })
     .catch((err) => {
       console.log(err);
@@ -104,7 +102,7 @@ function handleRemoveCardSubmit(card) {
   submitPopup.renderLoading(true, 'Удаление...');
   api.sendDeleteRequest(card.id)
   .then(() => {
-    card._handleDeleteCard(card.cardPhotoElement.closest('.card'));
+    card.handleDeleteCard();
     submitPopup.renderLoading(true, 'Удалено');
     submitPopup.close();
     return Promise.resolve();
@@ -121,9 +119,10 @@ const addNewCardSectionInstanse = new Section({
   items: null,
   renderer: function(card) {
       const cardInstanse = new Card(
-        {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike: false, id: card._id},
-        {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
-        {handlePutLikeOnCard, handleDeleteLikeFromCard}
+        card,
+        {photoPopup, submitPopup, userInfo},
+        {handlePutLikeOnCard, handleDeleteLikeFromCard},
+        cardTemplateSelector
       );
       return cardInstanse.createCard();
   }
@@ -152,51 +151,17 @@ enableValidation({
 
 Promise.all([api.uploadUserInformationRequest(), api.getCardsArrayRequest()])
 .then((results) => {
-  userInfo.setUserInfo({name: results[0].name, about: results[0].about, avatar: results[0].avatar, _id: results[0]._id});
+  userInfo.setUserInfo(results[0]);
   addNewCardSectionInstanse.setNewItems(results[1]);
-  addNewCardSectionInstanse.setNewRenderer(
-    function renderer(card) {
-      if(card.likes.length === 0) {
-        const cardInstanse = new Card(
-          {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike: false, id: card._id},
-          {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
-          {handlePutLikeOnCard, handleDeleteLikeFromCard}
-        );
-        return cardInstanse.createCard();
-      } else {
-        const myLike = card.likes.some(user => {return user._id === userInfo.getUserInfo().id});
-        const cardInstanse = new Card(
-          {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike, id: card._id},
-          {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
-          {handlePutLikeOnCard, handleDeleteLikeFromCard}
-        );
-        return cardInstanse.createCard();
-      }
-    }
-  );
   addNewCardSectionInstanse.renderItems();
 })
 .catch((err) => {
   console.log(err);
-})
-.finally(() => {
-  addNewCardSectionInstanse.setNewItems(null);
-  addNewCardSectionInstanse.setNewRenderer(
-    function renderer(card) {
-      const cardInstanse = new Card(
-        {name: card.name, link: card.link, likesAmount: card.likes.length, ownerID: card.owner._id, myLike: false, id: card._id},
-        {photoPopupInstantce: photoPopup, submitPopupInstantce: submitPopup, userInfoInstantce: userInfo},
-        {handlePutLikeOnCard, handleDeleteLikeFromCard}
-      );
-      return cardInstanse.createCard();
-    }
-  );
 });
 
 editProfilePopup.setEventListeners();
 editProfileButton.addEventListener('click', () => {
-    const {name, work} = userInfo.getUserInfo();
-    editProfilePopup.setInputValues({name: name, work: work});
+    editProfilePopup.setInputValues(userInfo.getUserInfo());
     formValidators['editForm'].resetValidation();
     editProfilePopup.open();
 });

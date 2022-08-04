@@ -8,6 +8,11 @@ const editProfileButton = document.querySelector('.profile__edit-button');
 const addNewButton = document.querySelector('.profile__add-button');
 const avatarOverlay = document.querySelector('.profile__avatar-overlay');
 
+const cardTemplateSelector = '#card-template';
+const profileNameSelector = '.profile__name';
+const profileWorkSelector = '.profile__info-about';
+const profileAvatarSelector = '.profile__avatar';
+
 const apiConfig = {
     baseUrl: 'https://nomoreparties.co/v1/plus-cohort-13',
     headers: {
@@ -16,4 +21,4 @@ const apiConfig = {
     },
 };
 
-export {editProfileButton, apiConfig, addNewButton, uploadAvatarPopupSelector, avatarOverlay, photoPopupSelector, deleteActionSubmitSelector, editProfilePopupSelector, addNewPopupSelector};
+export {editProfileButton, apiConfig, addNewButton, uploadAvatarPopupSelector, avatarOverlay, photoPopupSelector, deleteActionSubmitSelector, editProfilePopupSelector, addNewPopupSelector, cardTemplateSelector, profileNameSelector, profileWorkSelector, profileAvatarSelector};

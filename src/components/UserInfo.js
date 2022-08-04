@@ -1,8 +1,8 @@
 export class UserInfo {
-    constructor() {
-        this._nameElement = document.querySelector('.profile__name');
-        this._workElement = document.querySelector('.profile__info-about');
-        this._avatarElement = document.querySelector('.profile__avatar');
+    constructor(selectors) {
+        this._nameElement = document.querySelector(selectors.nameSelector);
+        this._workElement = document.querySelector(selectors.workSelector);
+        this._avatarElement = document.querySelector(selectors.avatarSelector);
         this._name = '';
         this._work = '';
         this._id = '';
