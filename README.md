@@ -1,7 +1,7 @@
-# Проект: Место
+# Project: Place
 
-На сайте можно добавлять картинки с описанием посредством формы, которая активируется на +.
-Можно редактировать профиль.
-Все формы валидируются, попапы можно зыкрывать на esc и по клику на оверлей.
+On the site, you can add pictures with a description through the form, which is activated on +.
+You can edit your profile.
+All forms are validated, popups can be closed by esc and by clicking on the overlay.
 
-Ссылка на проект залитый на gh-pages: https://breadlinx.github.io/mesto-project/
+Link to the project uploaded to gh-pages: https://breadlinx.github.io/mesto-project/
